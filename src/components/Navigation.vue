@@ -1,9 +1,12 @@
-<template id="navbar">
-    <b-navbar class="navbar" toggleable="md" fixed="top">
-        <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
+<template><nav>
+    <b-navbar class="navbar" toggleable="lg" fixed="top">
+    <div class="container">
+        <b-navbar-toggle class="custom-toggler" target="nav_collapse_header"></b-navbar-toggle>
         <b-navbar-brand to="/">PatchDB</b-navbar-brand>
 
-        <b-collapse is-nav id="nav_collapse">
+        <b-collapse is-nav id="nav_collapse_header">
+
+            <!-- Left aligned nav items -->
             <b-navbar-nav>
                 <b-nav-item to="/" exact>Home</b-nav-item>
                 <b-nav-item to="/latest">Latest</b-nav-item>
@@ -12,31 +15,37 @@
 
             <!-- Right aligned nav items -->
             <b-navbar-nav class="ml-auto">
-                <b-nav-form>
-                    <b-form-input size="sm" class="mr-sm-2" type="text" placeholder="Search"/>
-                    <b-button size="sm" class="my-2 my-sm-0" type="submit">Search</b-button>
-                </b-nav-form>
-
-                <b-nav-item-dropdown text="Language" id="languageDropdown" right type="dark">
+                <b-nav-item-dropdown id="languageDropdown" right>
+                    <template slot="button-content">
+                        Language
+                    </template>
                     <b-dropdown-item href="#">EN</b-dropdown-item>
                     <b-dropdown-item href="#">DE</b-dropdown-item>
                 </b-nav-item-dropdown>
 
                 <b-nav-item v-if="!isLoggedIn" to="/login">Login</b-nav-item>
                 <b-nav-item v-if="!isLoggedIn" to="/register">Register</b-nav-item>    
+                
                 <b-nav-item-dropdown right id="userDropdown" v-if="isLoggedIn">
-                    <!-- Using button-content slot -->
                     <template slot="button-content">
-                    <em>{{userName}}</em> 
+                        <b>{{userName}}</b>
                     </template>
                     <b-dropdown-item v-if="isLoggedIn" to="/user">Profile</b-dropdown-item>
+                    <b-dropdown-divider></b-dropdown-divider>
                     <b-dropdown-item v-if="isLoggedIn" @click="logout">Logout</b-dropdown-item>
                 </b-nav-item-dropdown>
             </b-navbar-nav>
 
-        </b-collapse>
-    </b-navbar>
+            <!-- Search bar -->
+            <b-navbar-nav>
+                <b-nav-form>
+                    <b-form-input id="searchbar" size="sm" class="my-2 mr-2 ml-lg-3 mr-lg-2 mx-lg-2" type="text" placeholder="Search"/>
+                    <b-button variant="primary" size="sm" class="my-2" type="submit">Search</b-button>
+                </b-nav-form>
+            </b-navbar-nav>
 
+        </b-collapse></div>
+    </b-navbar></nav>
 </template>
 
 <script lang="ts">
@@ -84,19 +93,26 @@
 
 #languageDropdown__BV_button_:hover,
 #userDropdown__BV_button_:hover {
+    //color for dropdown title
     color: $gray-400 !important;
 }
 
-.show #languageDropdown__BV_button_,
-.show #userDropdown__BV_button_ {
+.show > #languageDropdown__BV_button_,
+.show > #userDropdown__BV_button_ {
+    //color for opened dropdown title
     color: $primary !important;
+    &:hover, &:active{
+        outline: none !important;
+    }
 }
 
 .dropdown-menu {
-    outline: none !important;
-    background-color: $gray-800 !important;
+    border-radius: 0%;
+    border: none;
+    box-shadow: 0px 0px 6px $gray-800;
 }
 
+.dropdown-menu,
 .dropdown-item {
     outline: none !important;
     background-color: $gray-800 !important;
@@ -106,12 +122,31 @@
     outline: none !important;
     background-color: $gray-700 !important;
 }
+
+.custom-toggler .navbar-toggler-icon { //color needs to be manually adjusted, there, $primary doesnt work...
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(43, 160, 121, 1)' stroke-width='1' stroke-linecap='square' stroke-miterlimit='10' d='M4 8h24M4 16h24M4 24h24'/%3E%3C/svg%3E");
+}
+
+.custom-toggler:hover .navbar-toggler-icon { //color needs to be manually adjusted, there, $primary doesnt work...
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(0, 0, 0, 1)' stroke-width='1' stroke-linecap='square' stroke-miterlimit='10' d='M4 8h24M4 16h24M4 24h24'/%3E%3C/svg%3E");
+}
+
+.custom-toggler.navbar-toggler {
+  border-color: rgba($primary, 1);
+  border-radius: 0%;
+} 
 </style>
 
 <style scoped lang="scss">
 .navbar {
     background-color: $gray-900;
-    border-bottom: 1px solid white;
+    border-bottom: 2px solid $primary;  
+    box-shadow: 0px 2px 7px $gray-800;
+}
+
+#searchbar {
+    min-width: 150px;
+    max-width: 300px;
 }
  
 .nav-link, a {
@@ -126,5 +161,9 @@
 .nav-link.active, a.active {
     outline: none !important;
     color: $primary !important;
+}
+
+button:hover {
+    background-color: $primary !important;
 }
 </style>

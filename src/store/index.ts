@@ -1,3 +1,4 @@
+import { LocalUserData } from './index';
 import Vue from 'vue';
 import Vuex, { StoreOptions } from 'vuex';
 import axios from 'axios'
@@ -41,19 +42,20 @@ const storeOptions : StoreOptions<AppState> = {
   },
   mutations: {
     auth_request(state : AppState){
-      state.status = 'loading'
+      state.status = 'loading';
     },
-    auth_success(state : AppState, {token, user}) {
-      state.status = 'success'
-      state.token = token
-      state.user = user
+    auth_success(state : AppState, payload) {
+      state.status = 'success';
+      state.token = payload.token;
+      state.user = payload.localUserData;
     },
     auth_error(state : AppState){
-      state.status = 'error'
+      state.status = 'error';
     },
     logout(state : AppState){
-      state.status = ''
-      state.token = ''
+      state.status = '';
+      state.token = '';
+      state.user = null;
     },
   },
   actions: {
@@ -81,16 +83,16 @@ const storeOptions : StoreOptions<AppState> = {
         // axios({url: 'http://localhost:3000/login', data: user, method: 'POST' })
         // .then(response => {
         //   let token = response.data.token;
-        //   let user = response.data.user;
+        //   let localUserData = response.data.user;
         //   localStorage.setItem('patchdb_token', JSON.stringify(token));
-        //   localStorage.setItem('patchdb_localUserData', JSON.stringify(user));
+        //   localStorage.setItem('patchdb_localUserData', JSON.stringify(localUserData));
         //   axios.defaults.headers.common['Authorization'] = token;
-        //   commit('auth_success', {token, user});
+        //   commit('auth_success', {token, localUserData});
         //   resolve(response);
         // })
         // .catch(err => {
-        //   commit('auth_error');
-        //   localStorage.removeItem('patchdb_token');
+        // localStorage.removeItem('patchdb_token');
+        // localStorage.removeItem('patchdb_localUserData');
         //   reject(err);
         // })
       })
@@ -102,11 +104,11 @@ const storeOptions : StoreOptions<AppState> = {
         axios({url: 'http://localhost:3000/register', data: user, method: 'POST' })
         .then(response => {
           let token = response.data.token;
-          let user = response.data.user;
+          let localUserData = response.data.user;
           localStorage.setItem('patchdb_token', JSON.stringify(token));
-          localStorage.setItem('patchdb_localUserData', JSON.stringify(user));
+          localStorage.setItem('patchdb_localUserData', JSON.stringify(localUserData));
           axios.defaults.headers.common['Authorization'] = token;
-          commit('auth_success', {token, user});
+          commit('auth_success', {token, localUserData});
           resolve(response);
         })
         .catch(err => {

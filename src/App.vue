@@ -1,16 +1,22 @@
 <template>
   <div id="app">
     <Navigation title="PatchDB"/>
-    <router-view class="container" id="routerView"/>
+    <div id="mainContainer">
+      <b-card>
+        <transition name="fade" mode="out-in"><router-view/></transition>
+      </b-card>
+    </div>
+    <Footer/>
   </div>
 </template>
 
 <script>
 import Navigation from '@/components/Navigation.vue'
+import Footer from '@/components/Footer.vue'
 
 export default {
   components: {
-    Navigation
+    Navigation, Footer
   }, 
   computed : {
     isLoggedIn : function(){ return this.$store.getters.isLoggedIn}

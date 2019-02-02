@@ -17,8 +17,8 @@ const router = new Router({
   routes: [
     { path: '/', name: 'home', component: Home, },
     { path: '/latest', name: 'latest', component: LatestView, },
-    { path: '/login', name: 'login', component: LoginView, },
-    { path: '/register', name: 'register', component: RegisterView, },
+    { path: '/login', name: 'login', component: LoginView, meta: { reqLoggedOut: true }, },
+    { path: '/register', name: 'register', component: RegisterView, meta: { reqLoggedOut: true }, },
     { path: '/user', name: 'user', component: ShowUserView, meta: { reqAuth: true }, },
     { path: '/patch', name: 'patch', component: PatchView, },
     { path: '/about',
@@ -32,11 +32,13 @@ const router = new Router({
   ],
 });
 
-//check if user is allowed to go to the desired route
-//"to" argument: route the user wants to go to 
-//"from" argument: route the user comes from
-//"next" a function that needs to be called. 
-//if next() is called, the navigation is confirmed. if next('/somePath') is called, the user gets redirected to 'somePath'
+/**
+*  check if user is allowed to go to the desired route
+*  "to" argument: route the user wants to go to 
+*  "from" argument: route the user comes from
+*  "next" a function that needs to be called. 
+*   if next() is called, the navigation is confirmed. if next('/somePath') is called, the user gets redirected to 'somePath' 
+*/
 router.beforeEach((to, from, next) => {
   if(to.matched.some(record => record.meta.reqAuth)) {
     //if the desired routed requires authentication, check if user is logged in
@@ -44,6 +46,13 @@ router.beforeEach((to, from, next) => {
       next(); 
     } else {
       next('/login');
+    }
+  } else if(to.matched.some(record => record.meta.reqLoggedOut)) {
+    //if the desired routed requires being logged out, check if user is logged out
+    if (!store.getters.isLoggedIn) {
+      next();
+    } else {
+      next('/');
     }
   } else {
     next();
