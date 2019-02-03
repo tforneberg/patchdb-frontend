@@ -1,6 +1,6 @@
 <template>
-  <div class="about">
-    <h1>This is a 404 page</h1>
+  <div class="about text-center">
+    <h1>Resource not found (Error 404)</h1>
   </div>
 </template>
 

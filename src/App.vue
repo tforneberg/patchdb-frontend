@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <Navigation title="PatchDB"/>
+    <Navigation title="Tobes' VueStarterTemplate"/>
     <div id="mainContainer">
       <b-card>
         <transition name="fade" mode="out-in"><router-view/></transition>
@@ -23,10 +23,7 @@ export default {
   },
   methods: {
     logout: function () {
-      this.$store.dispatch('logout')
-      .then(() => {
-        this.$router.push('/login')
-      })
+      this.$store.dispatch('logout').then(() => { this.$router.push('/login') });
     }
   },
   created: function () {
@@ -46,10 +43,4 @@ export default {
 </script>
 
 <style lang="scss">
-// #app {
-//   font-family: 'Avenir', Helvetica, Arial, sans-serif;
-//   -webkit-font-smoothing: antialiased;
-//   -moz-osx-font-smoothing: grayscale;
-//   text-align: center;
-// }
 </style>

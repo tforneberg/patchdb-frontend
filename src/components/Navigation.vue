@@ -1,8 +1,48 @@
+<script lang="ts">
+    import { Component, Prop, Vue } from 'vue-property-decorator';
+    import { Getter } from 'vuex-class';
+    import { User } from '@/model/User';
+    const namespace: string = 'AuthModule' //Vuex module namespace
+
+    @Component
+    export default class Navigation extends Vue {
+        private menuCollapsed : boolean = true;
+        private showProfileDropdown : boolean = false;
+
+        //injected properties
+        @Prop() 
+        private title?: string;
+
+        //Vuex getter binding generated properties
+        @Getter('loggedInUser', { namespace }) 
+        private loggedInUser?: User|null;
+        
+        @Getter('isLoggedIn', { namespace })
+        private isLoggedIn?: boolean;
+
+        //Methods
+        toggleShowMenu() : void {
+            this.menuCollapsed = !this.menuCollapsed
+        }
+
+        toggleProfileDropdown() : void {
+            this.showProfileDropdown = !this.showProfileDropdown;
+        }
+
+        logout() : void {
+            this.$store.dispatch('AuthModule/logout').then(() => {
+                this.$router.push('/');
+            })
+        }
+    }
+</script>
+
+
 <template><nav>
     <b-navbar class="navbar" toggleable="lg" fixed="top">
     <div class="container">
         <b-navbar-toggle class="custom-toggler" target="nav_collapse_header"></b-navbar-toggle>
-        <b-navbar-brand to="/">PatchDB</b-navbar-brand>
+        <b-navbar-brand to="/">{{title}}</b-navbar-brand>
 
         <b-collapse is-nav id="nav_collapse_header">
 
@@ -28,11 +68,11 @@
                 
                 <b-nav-item-dropdown right id="userDropdown" v-if="isLoggedIn">
                     <template slot="button-content">
-                        <b>{{userName}}</b>
+                        <b>{{loggedInUser.name}}</b>
                     </template>
-                    <b-dropdown-item v-if="isLoggedIn" to="/user">Profile</b-dropdown-item>
+                    <b-dropdown-item to="/user">Profile</b-dropdown-item>
                     <b-dropdown-divider></b-dropdown-divider>
-                    <b-dropdown-item v-if="isLoggedIn" @click="logout">Logout</b-dropdown-item>
+                    <b-dropdown-item @click="logout">Logout</b-dropdown-item>
                 </b-nav-item-dropdown>
             </b-navbar-nav>
 
@@ -47,43 +87,6 @@
         </b-collapse></div>
     </b-navbar></nav>
 </template>
-
-<script lang="ts">
-    import { Component, Prop, Vue } from 'vue-property-decorator';
-
-    @Component
-    export default class Navigation extends Vue {
-        //props
-        @Prop() private title? : string;
-    
-        menuCollapsed : boolean = true;
-        showProfileDropdown : boolean = false;
-
-        //methods
-        toggleShowMenu() : void {
-            this.menuCollapsed = !this.menuCollapsed
-        }
-
-        toggleProfileDropdown() : void {
-            this.showProfileDropdown = !this.showProfileDropdown;
-        }
-
-        logout() : void {
-            this.$store.dispatch('logout').then(() => {
-                this.$router.push('/home');
-            })
-        }
-
-        //computed
-        get userName() : string {
-            return this.$store.getters.loggedInUser.name;
-        }
-
-        get isLoggedIn() : boolean { 
-            return this.$store.getters.isLoggedIn;
-        }
-    }
-</script>
 
 <style lang="scss">
 #languageDropdown__BV_button_,
