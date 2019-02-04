@@ -1,3 +1,4 @@
+import { AuthModule } from './store/modules/AuthModule';
 import Vue from 'vue';
 import Router from 'vue-router';
 import store from './store/index';
@@ -42,14 +43,14 @@ const router = new Router({
 router.beforeEach((to, from, next) => {
   if(to.matched.some(record => record.meta.reqAuth)) {
     //if the desired routed requires authentication, check if user is logged in
-    if (store.getters.isLoggedIn) {
+    if (store.getters['AuthModule/isLoggedIn']) {
       next(); 
     } else {
       next('/login');
     }
   } else if(to.matched.some(record => record.meta.reqLoggedOut)) {
     //if the desired routed requires being logged out, check if user is logged out
-    if (!store.getters.isLoggedIn) {
+    if (!store.getters['AuthModule/isLoggedIn']) {
       next();
     } else {
       next('/');
