@@ -17,6 +17,7 @@ export function getFromLocalStorage(key : string) : Object | null {
 
 export interface RootState {
   version: string;
+  backend: string;
 }
 
 const storeOptions : StoreOptions<RootState> = {
@@ -24,7 +25,8 @@ const storeOptions : StoreOptions<RootState> = {
     AuthModule,
   },
   state: {
-    version: '1.0.0'
+    version: '1.0.0',
+    backend: 'http://localhost:5000/'
   }
 };
 

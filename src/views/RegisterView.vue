@@ -20,9 +20,17 @@ export default class RegisterView extends Vue {
     //validate form on client
     this.$validator.validate().then(formIsValid => {
       if (formIsValid) {
-        this.$store.dispatch('AuthModule/register', this.requestData)
-          .then(() => this.$router.push('/registrationSuccessfull'))
-          .catch(err => this.showServerSideRegistrationFailedMessage = true)
+        this.axios.post('api/users/register', this.requestData)
+        .then(response => {
+          console.log(response);
+
+          this.$router.push('/registrationSuccessfull');
+        })
+        .catch(err => {
+          console.log(err);
+
+          this.showServerSideRegistrationFailedMessage = true
+        })
       } else {
         this.showClientSideValidationFaliedMessage = true;
       }

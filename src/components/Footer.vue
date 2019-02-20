@@ -1,3 +1,18 @@
+<script lang="ts">
+    import { Component, Prop, Vue } from 'vue-property-decorator';
+
+    @Component
+    export default class Footer extends Vue {
+        //props
+        private menuCollapsed : boolean = true;
+
+        //methods
+        toggleShowMenu() : void {
+            this.menuCollapsed = !this.menuCollapsed
+        }
+    }
+</script>
+
 <template><nav>
     <b-navbar class="footer" toggleable="lg"><div class="container">
         <b-navbar-nav>
@@ -9,22 +24,6 @@
         </b-navbar-nav>
     </div></b-navbar>
 </nav></template>
-
-<script lang="ts">
-    import { Component, Prop, Vue } from 'vue-property-decorator';
-
-    @Component
-    export default class Footer extends Vue {
-        //props
-
-        menuCollapsed : boolean = true;
-
-        //methods
-        toggleShowMenu() : void {
-            this.menuCollapsed = !this.menuCollapsed
-        }
-    }
-</script>
 
 <style scoped lang="scss">
 .footer {

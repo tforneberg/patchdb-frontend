@@ -1,96 +1,95 @@
-import { LoginRequestData, RegisterRequestData } from '@/model/RequestData';
+import { LoginRequestData } from '@/model/RequestData';
 import { Module, MutationTree, GetterTree, ActionTree } from 'vuex';
 import { User } from '@/model/User';
 import { getFromLocalStorage, RootState } from '@/store';
 import axios from 'axios';
 
 interface AuthState {
-    status: string;
-    token: string | null;
+    auth: boolean | null;
     user: User | null;
+    error: string | null;
+    loading: boolean
 }
 
 const state: AuthState = {
-    token: <string|null> getFromLocalStorage('token'),
+    //init the state object with these values at startup
+    auth: <boolean|null> getFromLocalStorage('auth'),
     user: <User|null> getFromLocalStorage('user'),
-    status: ""
+    error: null,
+    loading: false
 };
 
 const namespaced: boolean = true;
 
 const mutations: MutationTree<AuthState> = {
-    auth_request(state : AuthState){
-      state.status = 'loading';
+    auth_request(state : AuthState, payload){
+      state.loading = payload;
     },
     auth_success(state : AuthState, payload: any) {
-      state.status = 'success';
-      state.token = payload.token;
+      state.loading = false;
+      state.error = null;
+
+      state.auth = true;
+      localStorage.setItem("auth", JSON.stringify(true));
       state.user = payload.user;
+      localStorage.setItem("user", JSON.stringify(payload.user));
     },
-    auth_error(state : AuthState){
-      state.status = 'error';
+    auth_error(state : AuthState, payload: any){
+      state.error = payload;
+      localStorage.removeItem('auth');
+      localStorage.removeItem('user');
     },
     logout(state : AuthState){
-      state.status = '';
-      state.token = '';
+      state.auth = false;
+      localStorage.removeItem('auth');
       state.user = null;
+      localStorage.removeItem('user');
     },
 };
 
 const actions: ActionTree<AuthState, RootState> = {
+    // loginJWT({commit}, requestData : LoginRequestData) : any {
+    //   return new Promise((resolve, reject) => {
+    //     commit('auth_request');
+
+    //     axios({url: this.getters.backend()+'api/login', data: requestData, method: 'POST'})
+    //     .then(response => {
+    //       // let user = new User(response.data.user.name, response.data.user.role || null);   
+    //       let user = new User(requestData.name, ""); //todo get user role from ... somewhere. cookie not possible bc httpOnly. Maybe server can send it over in body. 
+    //       commit('auth_success', {user});
+    //       resolve(response);
+    //     })
+    //     .catch(err => {
+    //       commit('auth_error', {err});
+    //       reject(err);
+    //     })
+    //   })
+    // },
+
     login({commit}, requestData : LoginRequestData) : any {
       return new Promise((resolve, reject) => {
         commit('auth_request');
-        if (requestData.name == "tobi" && requestData.password == "1234") { //"mock" for if(server says yes)
-          let user = new User(requestData.name, 666);
-          let token = "einTollesToken";
-          localStorage.setItem('token', JSON.stringify(token));
-          localStorage.setItem('user', JSON.stringify(user));
-          commit('auth_success', {token, user});
-          resolve("Jawoll!");
-        } else {
-          commit('auth_error');
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
-          reject("nope, so nicht!");
-        }
 
-        //implementation for later:
-        // axios({url: 'http://localhost:3000/login', data: requestData, method: 'POST' })
-        // .then(response => {
-        //   let token = response.data.token;
-        //   let user = new User(response.data.user.name, response.data.user.id);
-        //   localStorage.setItem('token', JSON.stringify(token));
-        //   localStorage.setItem('user', JSON.stringify(user));
-        //   axios.defaults.headers.common['Authorization'] = token;
-        //   commit('auth_success', {token, user});
-        //   resolve(response);
-        // })
-        // .catch(err => {
-        // localStorage.removeItem('token');
-        // localStorage.removeItem('user');
-        //   reject(err);
-        // })
-      })
-    },
-
-    register({commit}, requestData : RegisterRequestData){
-      return new Promise((resolve, reject) => {
-        commit('auth_request');
-        axios({url: 'http://t-forneberg.de/register', data: requestData, method: 'POST' })
+        axios.get('', {
+          auth: {
+            username: requestData.name,
+            password: requestData.password
+          }
+        })
         .then(response => {
-          let token = response.data.token;
-          let user = new User(response.data.user.name, response.data.user.id);
-          localStorage.setItem('token', JSON.stringify(token));
-          localStorage.setItem('user', JSON.stringify(user));
-          axios.defaults.headers.common['Authorization'] = token;
-          commit('auth_success', {token, user});
-          resolve(response);
+          axios.get('api/users/search/findByName?projection=compact&name='+requestData.name)
+          .then(res => {
+            let user = new User(res.data.id, res.data.name, res.data.status, res.data.patchIDs)
+            commit('auth_success', {user});
+            resolve(response);
+          })
+          .catch(err => {
+            commit('auth_error', {err});
+            reject(err);
+          })
         })
         .catch(err => {
-          commit('auth_error', err);
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
+          commit('auth_error', {err});
           reject(err);
         })
       })
@@ -100,18 +99,20 @@ const actions: ActionTree<AuthState, RootState> = {
       return new Promise((resolve, reject) => {
         //todo: remove token on server side
         commit('logout');
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        delete axios.defaults.headers.common['Authorization'];
+        
+        //tell the server to logout and invalidate the cookies (must be POST)
+        axios({url: 'api/logout', method: 'POST'});
+
         resolve();
       })
     }
 };
 
 const getters: GetterTree<AuthState, RootState> = {
-    isLoggedIn: state => !!state.token, //if token is falsey, return false
+    isLoggedIn: state => state.auth,
     loggedInUser: state => state.user,
-    authStatus: state => state.status,
+    isLoading: state => state.loading,
+    error: state => state.error
 };
 
 export const AuthModule: Module<AuthState, RootState> = {

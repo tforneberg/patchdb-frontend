@@ -1,6 +1,8 @@
 export class User {
     constructor(
-        public name: string,
         public id: number,
+        public name: string,
+        public role: string,
+        public patchIDs: number[],
     ) {}
 }

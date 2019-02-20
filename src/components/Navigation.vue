@@ -48,9 +48,14 @@
 
             <!-- Left aligned nav items -->
             <b-navbar-nav>
-                <b-nav-item to="/" exact>Home</b-nav-item>
-                <b-nav-item to="/latest">Latest</b-nav-item>
-                <b-nav-item to="/about">About</b-nav-item>
+                <b-nav-item-dropdown id="languageDropdown" right>
+                    <template slot="button-content">
+                        Patches
+                    </template>
+                    <b-dropdown-item to="/latest">Latest</b-dropdown-item>
+                    <b-dropdown-item to="/hottest">Hottest</b-dropdown-item>
+                    <b-dropdown-item to="/add/patch" v-if="isLoggedIn">Add Patch</b-dropdown-item>
+                </b-nav-item-dropdown>
             </b-navbar-nav> 
 
             <!-- Right aligned nav items -->
@@ -70,7 +75,10 @@
                     <template slot="button-content">
                         <b>{{loggedInUser.name}}</b>
                     </template>
-                    <b-dropdown-item to="/user">Profile</b-dropdown-item>
+                    <b-dropdown-item to="/overview">Overview</b-dropdown-item>
+                    <b-dropdown-item :to="'/user/'+loggedInUser.name" exact>My Profile</b-dropdown-item>
+                    <b-dropdown-item :to="'/user/'+loggedInUser.name+'/collection'" exact>My Collection</b-dropdown-item>
+                    <b-dropdown-item to="/settings">Settings</b-dropdown-item>
                     <b-dropdown-divider></b-dropdown-divider>
                     <b-dropdown-item @click="logout">Logout</b-dropdown-item>
                 </b-nav-item-dropdown>

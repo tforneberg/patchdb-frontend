@@ -1,9 +1,3 @@
-<template>
-  <div class="about text-center">
-    <h1>Resource not found (Error 404)</h1>
-  </div>
-</template>
-
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 
@@ -14,3 +8,9 @@ import { Component, Vue } from 'vue-property-decorator';
 })
 export default class NotFoundView extends Vue {}
 </script>
+
+<template>
+  <div class="about text-center">
+    <h1>Resource not found (Error 404)</h1>
+  </div>
+</template>

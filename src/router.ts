@@ -1,27 +1,33 @@
-import { AuthModule } from './store/modules/AuthModule';
 import Vue from 'vue';
 import Router from 'vue-router';
 import store from './store/index';
 
-import Home from './views/HomeView.vue';
+import AddPatchView from './views/AddPatchView.vue';
+import ArtistView from './views/ArtistView.vue';
+import CollectionView from './views/CollectionView.vue';
+import EditProfileView from './views/EditProfileView.vue';
+import HomeView from './views/HomeView.vue';
 import LatestView from './views/LatestView.vue';
 import LoginView from './views/LoginView.vue';
-import RegisterView from './views/RegisterView.vue';
-import ShowUserView from './views/ShowUserView.vue';
-import PatchView from './views/PatchView.vue';
 import NotFoundView from './views/NotFoundView.vue';
+import OverviewView from './views/OverviewView.vue';
+import PatchDetailsView from './views/PatchDetailsView.vue';
+import RegisterView from './views/RegisterView.vue';
+import RegistrationSuccessful from './views/RegistrationSuccessfulView.vue';
+import SettingsView from './views/SettingsView.vue';
+import ShowUserView from './views/ShowUserView.vue';
 
 Vue.use(Router);
 
 const router = new Router({
   mode: 'history',
   routes: [
-    { path: '/', name: 'home', component: Home, },
+    //public routes
+    { path: '/', name: 'home', component: HomeView, },
     { path: '/latest', name: 'latest', component: LatestView, },
     { path: '/login', name: 'login', component: LoginView, meta: { reqLoggedOut: true }, },
     { path: '/register', name: 'register', component: RegisterView, meta: { reqLoggedOut: true }, },
-    { path: '/user', name: 'user', component: ShowUserView, meta: { reqAuth: true }, },
-    { path: '/patch', name: 'patch', component: PatchView, },
+    { path: '/registrationSuccessful', name: 'registrationSuccessful', component: RegistrationSuccessful, },
     { path: '/about',
       name: 'about',
       // route level code-splitting
@@ -29,6 +35,18 @@ const router = new Router({
       // which is lazy-loaded when the route is visited.
       component: () => import(/* webpackChunkName: "about" */ './views/AboutView.vue'),
     },
+    { path: '/artist/:id', name: 'artist', component: ArtistView, },
+    { path: '/patch/:id', name: 'patch', component: PatchDetailsView, },
+
+    //access for all logged in users
+    { path: '/overview', name: 'overview', component: OverviewView, meta: { reqAuth: true }  },
+    { path: '/user/:username', name: 'user', component: ShowUserView, props: true, meta: { reqAuth: true }, },
+    { path: '/user/:username/collection', name: 'collection', component: CollectionView, props: true, meta: { reqAuth: true }, },
+    { path: '/user/edit/profile', name: 'editProfile', component: EditProfileView, meta: { reqAuth: true }, },
+    { path: '/settings', name: 'settings', component: SettingsView, meta: { reqAuth: true }, },
+    { path: '/add/patch', name: 'addPatch', component: AddPatchView, meta: { reqAuth: true }, },
+
+    //NotFoundView
     { path: '*', component: NotFoundView }
   ],
 });
