@@ -10,36 +10,34 @@
         @Prop() private patch?: Patch;
 
         //Vuex getter binding generated properties
-        @Getter('loggedInUser', { namespace }) 
+        @Getter('loggedInUser', { namespace: 'AuthModule' }) 
         private loggedInUser?: User|null;
         
-        @Getter('isLoggedIn', { namespace })
-        private isLoggedIn?: boolean;
+        @Getter('patchIDs', { namespace: 'PatchModule' })
+        private patchIDs?: number[];
 
         get userHasPatch() : boolean {
-            if (this.patch && this.loggedInUser) {
-                return this.loggedInUser.patchIDs.includes(this.patch.id);
+            if (this.patch && this.patchIDs) {
+                return this.patchIDs.includes(this.patch.id);
             } else {
                 return false;
             }
         }
 
         private addToCollection() : void {
-            if (this.loggedInUser == null) return;
-            if (this.patch == null) return;
-            let data = { "op":"add", "path":"/", "value": this.patch.id }
-            this.axios.patch('api/users/'+this.loggedInUser.id+'/patches/', data)
-            .then(res => console.log(res))
-            .catch(err => console.log(err));
+            if (this.patch) {
+                this.$store.dispatch('PatchModule/addPatchToCollection', this.patch.id)
+                .then(response => {})
+                .catch(error => {})
+            }
         }
 
         private removeFromCollection() : void {
-            if (this.loggedInUser == null) return;
-            if (this.patch == null) return;
-            let data = { "op":"remove", "path":"/", "value": this.patch.id }
-            this.axios.patch('api/users/'+this.loggedInUser.id+'/patches/', data)
-            .then(res => console.log(res))
-            .catch(err => console.log(err));
+            if (this.patch) {
+                this.$store.dispatch('PatchModule/removePatchFromCollection', this.patch.id)
+                .then(response => {})
+                .catch(error => {})
+            }
         }
     }
 </script>
@@ -50,7 +48,7 @@
         <p>Submitted by {{patch.userInserted.name}} on {{patch.dateInserted}}</p>
         <p>{{patch.description}}</p>
         <img :src="patch.image"/>
-        <div v-if="isLoggedIn">
+        <div v-if="loggedInUser">
             <b-button v-if="userHasPatch" @click="removeFromCollection">Remove from Collection</b-button>
             <b-button v-else @click="addToCollection">Add to Collection</b-button>
         </div>

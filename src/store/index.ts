@@ -3,14 +3,15 @@ import Vue from 'vue';
 import Vuex, { StoreOptions } from 'vuex';
 
 import { AuthModule } from './modules/AuthModule';
+import { PatchModule } from './modules/PatchModule';
 
 Vue.use(Vuex);
 
 export function getFromLocalStorage(key : string) : Object | null {
-  let tokenJSON = localStorage.getItem(key);
-  if (!tokenJSON) { return null; } 
+  let itemAsJSON: string|null = localStorage.getItem(key);
+  if (!itemAsJSON) { return null; } 
   else {
-    try { return JSON.parse(tokenJSON); } 
+    try { return JSON.parse(itemAsJSON); } 
     catch { return null; }
   }
 }
@@ -23,6 +24,7 @@ export interface RootState {
 const storeOptions : StoreOptions<RootState> = {
   modules: {
     AuthModule,
+    PatchModule,
   },
   state: {
     version: '1.0.0',

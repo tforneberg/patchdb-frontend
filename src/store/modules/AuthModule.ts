@@ -11,8 +11,8 @@ interface AuthState {
     loading: boolean
 }
 
+//init the state object with these values at startup
 const state: AuthState = {
-    //init the state object with these values at startup
     auth: <boolean|null> getFromLocalStorage('auth'),
     user: <User|null> getFromLocalStorage('user'),
     error: null,
@@ -48,24 +48,6 @@ const mutations: MutationTree<AuthState> = {
 };
 
 const actions: ActionTree<AuthState, RootState> = {
-    // loginJWT({commit}, requestData : LoginRequestData) : any {
-    //   return new Promise((resolve, reject) => {
-    //     commit('auth_request');
-
-    //     axios({url: this.getters.backend()+'api/login', data: requestData, method: 'POST'})
-    //     .then(response => {
-    //       // let user = new User(response.data.user.name, response.data.user.role || null);   
-    //       let user = new User(requestData.name, ""); //todo get user role from ... somewhere. cookie not possible bc httpOnly. Maybe server can send it over in body. 
-    //       commit('auth_success', {user});
-    //       resolve(response);
-    //     })
-    //     .catch(err => {
-    //       commit('auth_error', {err});
-    //       reject(err);
-    //     })
-    //   })
-    // },
-
     login({commit}, requestData : LoginRequestData) : any {
       return new Promise((resolve, reject) => {
         commit('auth_request');
@@ -79,8 +61,10 @@ const actions: ActionTree<AuthState, RootState> = {
         .then(response => {
           axios.get('api/users/search/findByName?projection=compact&name='+requestData.name)
           .then(res => {
-            let user = new User(res.data.id, res.data.name, res.data.status, res.data.patchIDs)
+            let user = new User(res.data.id, res.data.name, res.data.status)
             commit('auth_success', {user});
+            let patchIDs = res.data.patchIDs;
+            this.dispatch('PatchModule/initPatches', patchIDs, { root: true })
             resolve(response);
           })
           .catch(err => {
@@ -97,9 +81,7 @@ const actions: ActionTree<AuthState, RootState> = {
 
     logout({commit}){
       return new Promise((resolve, reject) => {
-        //todo: remove token on server side
         commit('logout');
-        
         //tell the server to logout and invalidate the cookies (must be POST)
         axios({url: 'api/logout', method: 'POST'});
 
