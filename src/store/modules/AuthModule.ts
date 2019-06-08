@@ -61,7 +61,7 @@ const actions: ActionTree<AuthState, RootState> = {
         .then(response => {
           axios.get('api/users/search/findByName?projection=compact&name='+requestData.name)
           .then(res => {
-            let user = new User(res.data.id, res.data.name, res.data.status)
+            let user = new User(res.data.id, res.data.name, res.data.status, res.data.image)
             commit('auth_success', {user});
             let patchIDs = res.data.patchIDs;
             this.dispatch('PatchModule/initPatches', patchIDs, { root: true })

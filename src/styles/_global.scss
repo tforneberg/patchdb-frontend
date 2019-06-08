@@ -36,8 +36,19 @@ body {
 
   .alert {
     border-radius: 0%;
-    background-color: desaturate(lighten($errorColor, 20%), $amount: 25%);
     color: black;
+  }
+
+  .alert-warning {
+    background-color: desaturate(lighten($errorColor, 20%), $amount: 25%);
+  }
+
+  .alert-success {
+    background-color: desaturate(lighten($primary, 20%), $amount: 25%);
+  }
+
+  .alert-info {
+    background-color: desaturate($gray-500, $amount: 25%);
   }
 
   .card-body {
@@ -146,6 +157,10 @@ body {
   img::-moz-selection {
     background: transparent;
   }
+
+  img .patchDetailImage {
+    padding: 10px;
+  }
   
   .list-group-item {
     background: transparent;
@@ -193,7 +208,9 @@ body {
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 4px $primary;
   }
 
-  input, textarea {
+
+  //remove round borders from bootstrap theme 
+  input, textarea, .custom-file-label, .custom-file-label::after {
     border-radius: 0%;
   }
 

@@ -6,7 +6,7 @@ import axios from 'axios';
 export default {
   components: {
     Navigation, Footer
-  }, 
+  },
   computed: {
     isLoggedIn : function() { return this.$store.getters.isLoggedIn }
   },
@@ -47,9 +47,9 @@ export default {
 
 <template>
   <div id="app">
-    <Navigation title="Tobes' VueStarterTemplate"/>
+    <Navigation title="PatchDB"/>
     <div id="mainContainer">
-      <b-card>
+      <b-card id="mainCard">
         <transition name="fade" mode="out-in">
           <router-view/>
         </transition>
@@ -60,4 +60,9 @@ export default {
 </template>
 
 <style lang="scss">
+#mainCard {
+  // background-attachment: fixed;
+  // background-size: 100%;
+  // background-image: url('assets/backgroundDenim.jpg');
+}
 </style>

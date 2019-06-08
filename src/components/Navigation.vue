@@ -56,6 +56,12 @@
                     <b-dropdown-item to="/hottest">Hottest</b-dropdown-item>
                     <b-dropdown-item to="/add/patch" v-if="isLoggedIn">Add Patch</b-dropdown-item>
                 </b-nav-item-dropdown>
+                <b-nav-item-dropdown id="languageDropdown" right>
+                    <template slot="button-content">
+                        Community
+                    </template>
+                    <b-dropdown-item to="/users">Users</b-dropdown-item>
+                </b-nav-item-dropdown>
             </b-navbar-nav> 
 
             <!-- Right aligned nav items -->
@@ -76,8 +82,8 @@
                         <b>{{loggedInUser.name}}</b>
                     </template>
                     <b-dropdown-item to="/overview">Overview</b-dropdown-item>
-                    <b-dropdown-item :to="'/user/'+loggedInUser.name" exact>My Profile</b-dropdown-item>
-                    <b-dropdown-item :to="'/user/'+loggedInUser.name+'/collection'" exact>My Collection</b-dropdown-item>
+                    <b-dropdown-item :to="'/user/'+loggedInUser.id" exact>My Profile</b-dropdown-item>
+                    <b-dropdown-item :to="'/user/'+loggedInUser.id+'/collection'" exact>My Collection</b-dropdown-item>
                     <b-dropdown-item to="/settings">Settings</b-dropdown-item>
                     <b-dropdown-divider></b-dropdown-divider>
                     <b-dropdown-item @click="logout">Logout</b-dropdown-item>
@@ -150,9 +156,9 @@
 
 <style scoped lang="scss">
 .navbar {
-    background-color: $gray-900;
+    background-color: $gray-800;
     border-bottom: 2px solid $primary;  
-    box-shadow: 0px 2px 7px $gray-800;
+    box-shadow: 0px 2px 7px $gray-600;
 }
 
 #searchbar {

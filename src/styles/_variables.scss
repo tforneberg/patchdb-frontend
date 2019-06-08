@@ -11,12 +11,17 @@ $gray-900: #212529 !default;
 $gray-990: #181a1d !default;
 $black: #000 !default;
 
-$primary: #2ba079 !default; //old 2ec65e
-$primaryRGBA: rgba(43, 160, 121, 1);
+// $primary: #2ba079 !default; //old 2ec65e
+// $primaryRGBA: rgba(43, 160, 121, 1);
+
+$primary: #2f72b5 !default;
+
+
 $background: #dddddd !default;
 
 $errorColor: darken(red, 10%);
 $validColor: green;
+$warningColor: rgb(255, 255, 134);
 
 $break-md: 768px;
 $break-lg: 992px;

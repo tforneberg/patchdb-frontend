@@ -6,6 +6,7 @@ import BootstrapVue from 'bootstrap-vue';
 import axios from 'axios';
 import VueAxios from 'vue-axios';
 import VeeValidate from "vee-validate";
+import VueLazyLoad from 'vue-lazyload';
 
 axios.defaults.withCredentials = true; //needed for CORS
 axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'; //needed for HTTP basic auth
@@ -15,6 +16,7 @@ Vue.config.productionTip = false;
 Vue.use(BootstrapVue);
 Vue.use(VueAxios, axios);
 Vue.use(VeeValidate, {classes: true , events: 'change'});
+Vue.use(VueLazyLoad);
 
 new Vue({
   router,

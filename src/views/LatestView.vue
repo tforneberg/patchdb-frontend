@@ -7,14 +7,28 @@ import axios from 'axios';
 
 @Component({ components: { PatchComponent }, })
 export default class LatestView extends Vue {
-  patches: Patch[] = [];
+  private patches:Patch[] = [];
+  private currentPage:number = 0;
+  private size:number = 12;
+  private sortString:string = 'dateInserted,desc';
+
+  private loadNextButtonVisible:boolean = true;
 
   created() {
-    axios.get('api/patches')
+    this.loadPatches();
+  }
+
+  private loadPatches() : void {
+    axios.get('api/patches?page='+this.currentPage+'&size='+this.size+'&sort='+this.sortString)
       .then(response => {
-        this.patches = response.data._embedded.patches;
+        var newPatches = response.data._embedded.patches;
+        this.patches.push(...newPatches);
+        this.currentPage++;
+        if (newPatches.length < this.size) {
+          this.loadNextButtonVisible = false;
+        }
       })
-      .catch(err => {
+      .catch(err => { //TODO error message?
       });
   }
 }
@@ -24,12 +38,16 @@ export default class LatestView extends Vue {
   <div>
     <div class="row">
       <div class="col-12 col-md-6 col-lg-4 col-xl-3" v-for="patch in patches" v-bind:key="patch.id">
-        <b-card class="mx-3 my-3"><PatchComponent v-bind:patch="patch"/></b-card>
+        <PatchComponent class="mx-3 my-3" v-bind:patch="patch"/>
       </div>
     </div>
+    <div class="text-center">
+      <button v-if="loadNextButtonVisible" id="loadNextEntries" @click="loadPatches()" type="submit" class="btn btn-primary">Load next Patches</button>
+    </div>
   </div>
-</template>
+</template> 
 
 <style lang="scss" scoped>
+
 
 </style>

@@ -8,6 +8,7 @@ import CollectionView from './views/CollectionView.vue';
 import EditProfileView from './views/EditProfileView.vue';
 import HomeView from './views/HomeView.vue';
 import LatestView from './views/LatestView.vue';
+import UsersView from './views/UsersView.vue';
 import LoginView from './views/LoginView.vue';
 import NotFoundView from './views/NotFoundView.vue';
 import OverviewView from './views/OverviewView.vue';
@@ -35,13 +36,14 @@ const router = new Router({
       // which is lazy-loaded when the route is visited.
       component: () => import(/* webpackChunkName: "about" */ './views/AboutView.vue'),
     },
-    { path: '/artist/:id', name: 'artist', component: ArtistView, },
-    { path: '/patch/:id', name: 'patch', component: PatchDetailsView, },
+    { path: '/artist/:id', name: 'artist', component: ArtistView, props: true, },
+    { path: '/patch/:id', name: 'patch', component: PatchDetailsView, props: true, },
 
     //access for all logged in users
+    { path: '/users', name: 'users', component: UsersView, meta: { reqAuth: true } },
     { path: '/overview', name: 'overview', component: OverviewView, meta: { reqAuth: true }  },
-    { path: '/user/:username', name: 'user', component: ShowUserView, props: true, meta: { reqAuth: true }, },
-    { path: '/user/:username/collection', name: 'collection', component: CollectionView, props: true, meta: { reqAuth: true }, },
+    { path: '/user/:id', name: 'user', component: ShowUserView, props: true, meta: { reqAuth: true }, },
+    { path: '/user/:id/collection', name: 'collection', component: CollectionView, props: true, meta: { reqAuth: true }, },
     { path: '/user/edit/profile', name: 'editProfile', component: EditProfileView, meta: { reqAuth: true }, },
     { path: '/settings', name: 'settings', component: SettingsView, meta: { reqAuth: true }, },
     { path: '/add/patch', name: 'addPatch', component: AddPatchView, meta: { reqAuth: true }, },

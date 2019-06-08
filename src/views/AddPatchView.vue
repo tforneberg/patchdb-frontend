@@ -10,18 +10,21 @@ export default class AddPatchView extends Vue {
   private image : any = '';  
 
   private showClientSideValidationFaliedMessage = false;
-  private showServerSideLoginFailedMessage = false;
+  private showServerSideValidationFailedMessage = false;
+  private showSuccessMessage = false;
+  private isUploading = false;
 
-  resetFailMessages() : void {
-    this.showServerSideLoginFailedMessage = false;
+  hideSuccessOrFailMessages() : void {
+    this.showServerSideValidationFailedMessage = false;
     this.showClientSideValidationFaliedMessage = false;
+    this.showSuccessMessage = false;
   }
 
   onFileChange(event : any) {
     var files = event.target.files || event.dataTransfer.files;
     if (!files.length) {
       this.image = '';
-      this.file = new File([],'');
+      this.file = null;
       return;
     }
     this.file = files[0];
@@ -29,22 +32,30 @@ export default class AddPatchView extends Vue {
   }
 
   createImage(file : File) {
-    var instance = this;
-    var reader = new FileReader();
+    var addPatchView = this;
+    var fileReader = new FileReader();
 
-    reader.onload = ((e : FileReaderProgressEvent) => {
-      e.target != null ? instance.image = e.target.result : '';
+    fileReader.onload = ((event : ProgressEvent) => {
+      var fileReader:any = event.target;
+      if (fileReader != null && fileReader.result != null) {
+        addPatchView.image = fileReader.result;
+      } else {
+        addPatchView.image = '';
+      }
     });
-    reader.readAsDataURL(file);
+    fileReader.readAsDataURL(file);
   }
 
   onSubmit(event: any) : void {
     event.preventDefault();
 
+    //TODO show "Uploading ... please wait ..." like message or symbol
+
     //validate form on client
     this.$validator.validate().then(formIsValid => {
       if (formIsValid && this.file != null) {
-        // let json = JSON.stringify(this.requestData);
+        this.isUploading = true;
+
         let json = JSON.stringify(this.requestData.name);
         let blob = new Blob([json], {type: 'application/json'});
 
@@ -52,7 +63,16 @@ export default class AddPatchView extends Vue {
         formData.append('name', blob);
         formData.append('file', this.file);
 
-        this.axios.post('api/patches/', formData).then(response => console.log(response)).catch(err => console.log(err)); 
+        this.axios.post('api/patches/', formData).then(response => {
+          this.showSuccessMessage = true;
+          this.isUploading = false;
+          this.requestData = new AddPatchRequestData();
+          this.image = '';
+          this.file = null;
+        }).catch(err => {
+          this.showServerSideValidationFailedMessage = true;
+          this.isUploading = false;
+        }); 
       } else {
         this.showClientSideValidationFaliedMessage = true;
       }
@@ -66,10 +86,10 @@ export default class AddPatchView extends Vue {
   <div id="addPatchForm">
     <h4>Add Patch</h4>
     <!-- Form elements -->
-    <form @submit="onSubmit" novalidate @input="resetFailMessages">
+    <form @submit="onSubmit" novalidate @input="hideSuccessOrFailMessages">
       <div class="form-group" id="nameInputGroup">
         <label for="nameInput">Patch Name:</label>
-        <input type="text" class="form-control" :class="{ 'invalid' : showServerSideLoginFailedMessage }" id="nameInput" placeholder="Enter Patch Name" name="name"
+        <input type="text" class="form-control" :class="{ 'invalid' : showServerSideValidationFailedMessage }" id="nameInput" placeholder="Enter Patch Name" name="name"
           v-model="requestData.name" v-validate="'required'">
           <small v-show="errors.has('name')" class="invalidMessage form-text">{{errors.first('name')}}</small>
       </div>
@@ -78,11 +98,11 @@ export default class AddPatchView extends Vue {
       <div class="form-group" id="fileInputGroup">
         <label for="image">Image:</label>
         <div class="custom-file">
-          <input type="file" class="custom-file-input" :class="{ 'invalid' : showServerSideLoginFailedMessage }" 
-          id="image" name="image" v-validate="'mimes:image/png,image/jpeg'" data-vv-as="image" accept="image/png, image/jpeg" @change="onFileChange">
-          <label v-if="file" class="custom-file-label" for="validatedCustomFile">{{file.name}}</label>
-          <label v-else class="custom-file-label" for="validatedCustomFile">Choose file...</label>
-          <small v-show="errors.has('fileInput')" class="invalidMessage form-text">{{errors.first('fileInput')}}</small>
+          <input type="file" class="custom-file-input" :class="{ invalid : showServerSideValidationFailedMessage }" 
+          id="image" name="image" v-validate="'required|mimes:image/png,image/jpeg'" data-vv-as="image" accept="image/png, image/jpeg" @change="onFileChange">
+          <label v-if="file" class="custom-file-label" for="image" :class="{valid : fields.image && fields.image.valid, invalid: errors.has('image')}">{{file.name}}</label>
+          <label v-else class="custom-file-label" for="image" :class="{valid : fields.image && fields.image.valid, invalid: errors.has('image')}">Choose file...</label>
+          <small v-show="errors.has('image')" class="invalidMessage form-text">{{errors.first('image')}}</small>
         </div>
       </div>
 
@@ -92,7 +112,7 @@ export default class AddPatchView extends Vue {
       </div>
 
       <!-- Error alerts -->
-      <div v-if="showServerSideLoginFailedMessage" id="serverSideLoginFailedMessage" class="alert alert-danger mx-sm-5 text-center" role="alert">
+      <div v-if="showServerSideValidationFailedMessage" id="serverSideLoginFailedMessage" class="alert alert-danger mx-sm-5 text-center" role="alert">
         Patch could not be added.
       </div>
       <div v-if="showClientSideValidationFaliedMessage" id="clientSideFailedMessage" class="alert alert-danger mx-sm-5 text-center" role="alert">
@@ -101,7 +121,17 @@ export default class AddPatchView extends Vue {
 
       <!-- Submit button -->
       <div class="text-center">
-        <div><button type="submit" class="btn btn-primary">Submit</button></div>
+        <div><button id="submitButton" type="submit" :disabled="isUploading" class="btn btn-primary">Submit</button></div>
+      </div>
+
+      <!-- Uploading alert -->
+      <div v-if="isUploading" id="uploadingMessage" class="alert alert-info mx-sm-3 text-center" role="alert">
+        Uploading... please wait.
+      </div>
+
+      <!-- Success alert -->
+      <div v-if="showSuccessMessage" id="successMessage" class="alert alert-success mx-sm-3 text-center" role="alert">
+        Patch added!
       </div>
 
     </form>
@@ -116,8 +146,9 @@ export default class AddPatchView extends Vue {
   margin-right: auto;
 }
 
-button {
+#submitButton {
   margin: 6px;
+  margin-bottom: 12px;
   width: 200px;
 }
 
