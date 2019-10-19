@@ -1,10 +1,12 @@
 <script lang="ts">
-import { Component, Vue, Mixins, Prop } from 'vue-property-decorator';
+import { Component, Vue, Mixins, Prop, Ref } from 'vue-property-decorator';
 import { Patch, User } from '@/model/Model';
+import { SortingProp, PatchSortingProps } from '@/model/ui/SortingProp.ts';
 import { Constants } from '@/util/Constants';
 import PatchComponent from '@/components/PatchComponent.vue';
+import SortingComponent from '@/components/general/SortingComponent.vue';
 
-@Component({ components: { PatchComponent }, })
+@Component({ components: { PatchComponent, SortingComponent }, })
 export default class PatchListView extends Mixins(Constants) {
   @Prop({default: 'api/patches'}) endpointUrl:string;
 
@@ -13,18 +15,17 @@ export default class PatchListView extends Mixins(Constants) {
   private currentPage:number = 0;
   private size:number = 12;
 
-  private sortLabel = "Datum absteigend";
-  private sortProp = "dateInserted";
-  private sortDirection = "desc";
+  private sortingProps : Array<SortingProp> = PatchSortingProps;
+  @Ref() private sortingComponent : SortingComponent;
 
   private loadNextButtonVisible:boolean = true;
 
-  created() {
+  mounted() {
     this.loadPatches();
   }
 
   private loadPatches() : void {
-    this.axios.get(this.endpointUrl+'?page='+this.currentPage+'&size='+this.size+'&sortBy='+this.sortProp+'&direction='+this.sortDirection)
+    this.axios.get(this.endpointUrl+'?page='+this.currentPage+'&size='+this.size+this.sortingComponent.getSortUrlString())
       .then(response => {
         var newPatches = response.data;
         this.patches.push(...newPatches);
@@ -37,10 +38,7 @@ export default class PatchListView extends Mixins(Constants) {
       });
   }
 
-  private updateSortProp(newSortProp:string, newDirection: string, newSortLabel:string) {
-    this.sortProp = newSortProp;
-    this.sortDirection = newDirection;
-    this.sortLabel = newSortLabel;
+  private sortingChanged() {
     this.currentPage = 0;
     this.patches = [];
     this.loadPatches();  
@@ -52,16 +50,7 @@ export default class PatchListView extends Mixins(Constants) {
   <div class="text-center">
     <vue-headful :title="TITLE_PREFIX+'Latest Patches'"/>
     <h1>Patches</h1>
-
-    <b-dropdown>
-      <template slot="button-content">
-        Sortiert nach: {{this.sortLabel}}
-      </template>
-      <b-dropdown-item @click="updateSortProp('dateInserted', 'asc', 'Datum aufsteigend')">Datum aufsteigend</b-dropdown-item>
-      <b-dropdown-item @click="updateSortProp('dateInserted', 'desc', 'Datum absteigend')">Datum absteigend</b-dropdown-item>
-      <b-dropdown-item @click="updateSortProp('name', 'asc', 'Name aufsteigend')">Name aufsteigend</b-dropdown-item>
-      <b-dropdown-item @click="updateSortProp('name', 'desc', 'Name absteigend')">Name absteigend</b-dropdown-item>
-    </b-dropdown>
+    <SortingComponent :sortingProps="sortingProps" @changed="sortingChanged()" ref="sortingComponent" />
 
     <div class="row">
       <div class="col-12 col-md-6 col-lg-4 col-xl-3" v-for="patch in patches" v-bind:key="patch.id">

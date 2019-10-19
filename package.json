@@ -17,7 +17,7 @@
     "vue-headful": "^2.0.1",
     "vue-image-lightbox": "^6.2.0",
     "vue-lazyload": "^1.2.6",
-    "vue-property-decorator": "^7.0.0",
+    "vue-property-decorator": "^8.3.0",
     "vue-router": "^3.0.1",
     "vuex": "^3.0.1",
     "vuex-class": "^0.3.1"
