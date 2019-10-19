@@ -1,20 +1,15 @@
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-import { Getter } from 'vuex-class';
-import { User } from '@/model/User';
-import { ChangePasswordRequestData } from '@/model/RequestData';
-const namespace: string = 'AuthModule' //Vuex module namespace
+import { Component, Vue, Mixins } from 'vue-property-decorator';
+import { Constants } from '@/util/Constants';
+import { UserUtil } from '@/util/UserUtil';
+import { User, ChangePasswordRequestData } from '@/model/Model';
 
 @Component({components: { }, })
-export default class SettingsView extends Vue { 
+export default class SettingsView extends Mixins(UserUtil, Constants) { 
     private requestData = new ChangePasswordRequestData();
 
     private showClientSideValidationFaliedMessage = false;
     private showServerSideRegistrationFailedMessage = false;
-
-    //Vuex getter binding generated properties
-    @Getter('loggedInUser', { namespace }) 
-    private loggedInUser?: User|null;
 
     resetFailMessages() : void {
         this.showServerSideRegistrationFailedMessage = false;
@@ -46,6 +41,7 @@ export default class SettingsView extends Vue {
 
 <template>
     <div>
+        <vue-headful :title="TITLE_PREFIX+'User Settings'"/>
         <h1>Settings</h1>
         <h4>Change password</h4>
         <form @submit="onChangePassword" novalidate @input="resetFailMessages">

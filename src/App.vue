@@ -51,7 +51,7 @@ export default {
     <div id="mainContainer">
       <b-card id="mainCard">
         <transition name="fade" mode="out-in">
-          <router-view/>
+          <router-view :key="$route.fullPath"/>
         </transition>
       </b-card>
     </div>

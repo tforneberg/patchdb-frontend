@@ -1,86 +1,86 @@
-import { User } from '@/model/User';
-import { Module, MutationTree, GetterTree, ActionTree } from 'vuex';
+import { User, Patch, HttpPatchOperation } from '@/model/Model';
 import { getFromLocalStorage, RootState } from '@/store';
 import axios from 'axios';
+import { Module, VuexModule, Mutation, Action, getModule } from 'vuex-module-decorators';
+import AuthModule from './AuthModule';
+import store from '@/store';
 
-interface PatchState {
-    patchIDs : number[]
-}
+@Module({dynamic: true, namespaced: true, store: store, name: 'PatchModule' }  )
+export default class PatchModule extends VuexModule {
+    patchIDs_: number[] = getFromLocalStorage('patchIDs') as number[];
 
-//init the state object with these values at startup
-const state: PatchState = {
-    patchIDs: <number[]> getFromLocalStorage('patchIDs'),
-}
+    get patchIDs() : number[] {
+        return this.patchIDs_;
+    }
 
-const namespaced: boolean = true;
+    @Mutation
+    init_patches(patchIDs:number[]) : void {
+        this.patchIDs_ = patchIDs;
+        localStorage.setItem("patchIDs", JSON.stringify(this.patchIDs_));
+    }
 
-const mutations: MutationTree<PatchState> = {
-    init_patches(state: PatchState, payload: any) {
-        state.patchIDs = payload.patchIDs;
-        localStorage.setItem("patchIDs", JSON.stringify(state.patchIDs));
-    },
-    add_patch(state: PatchState, payload: any) {
-        state.patchIDs.push(payload.patchID);
-        localStorage.setItem("patchIDs", JSON.stringify(state.patchIDs));
-    },
-    remove_patch(state: PatchState, payload: any) {
-        let i = state.patchIDs.indexOf(payload.patchID);
+    @Mutation
+    add_patch(patchID:number) : void {
+        this.patchIDs_.push(patchID);
+        localStorage.setItem("patchIDs", JSON.stringify(this.patchIDs_));
+    }
+
+    @Mutation
+    remove_patch(patchID:number) : void {
+        let i = this.patchIDs_.indexOf(patchID);
         if (i !== -1) {
-            state.patchIDs.splice(i, 1);
-            localStorage.setItem("patchIDs", JSON.stringify(state.patchIDs));
+            this.patchIDs_.splice(i, 1);
+            localStorage.setItem("patchIDs", JSON.stringify(this.patchIDs_));
         }
-        
-    },
-    remove_all_patches(state: PatchState, payload: any) {
-        state.patchIDs.splice(0, state.patchIDs.length);
+    }
+
+    @Mutation
+    remove_all_patches() : void {
+        this.patchIDs_.splice(0, this.patchIDs_.length);
         localStorage.removeItem("patchIDs");
     }
-};
 
-const actions: ActionTree<PatchState, RootState> = {
-    initPatches({ commit }, patchIDs: number[]): any {
-        commit('init_patches', { patchIDs })
-    },
+    @Action
+    initPatches(patchIDs: number[]): void {
+        this.context.commit('init_patches', patchIDs);
+    }
 
-    addPatchToCollection({ commit }, patchID: number): any {
+    @Action
+    addPatchToCollection(patchID: number): Promise<any> {
         return new Promise((resolve, reject) => {
-            let data = { "op": "add", "path": "/", "value": patchID };
-            let loggedInUser : User = this.getters['AuthModule/loggedInUser'];
+            let request = new Patch();
+            request.operation = HttpPatchOperation.add;
+            request.id = patchID;
+            
+            let loggedInUser: User = getModule(AuthModule).loggedInUser;
             if (loggedInUser != null) {
-                axios.patch('api/users/' + loggedInUser.id + '/patches/', data)
+                axios.patch('api/users/' + loggedInUser.id + '/patches', request)
                     .then(res => {
-                        commit('add_patch', { patchID });
+                        this.context.commit('add_patch', patchID);
                         resolve(res);
                     })
                     .catch(err => { reject(err); })
             }
-        })
-    },
+        });
+    }
 
-    removePatchFromCollection({ commit }, patchID: number): any {
+    @Action
+    removePatchFromCollection(patchID: number): Promise<any> {
         return new Promise((resolve, reject) => {
-            let data = { "op": "remove", "path": "/", "value": patchID };
-            let loggedInUser: User = this.getters['AuthModule/loggedInUser'];
+            let request = new Patch();
+            request.id = patchID;
+            request.operation = HttpPatchOperation.remove;
+
+            let loggedInUser: User = getModule(AuthModule).loggedInUser;
             if (loggedInUser != null) {
-                axios.patch('api/users/' + loggedInUser.id + '/patches/', data)
+                axios.patch('api/users/' + loggedInUser.id + '/patches', request)
                     .then(res => {
-                        commit('remove_patch', { patchID });
+                        this.context.commit('remove_patch', patchID);
                         resolve(res);
                     })
                     .catch(err => { reject(err); })
             }
-        })
-    },
-};
+        });
+    }
 
-const getters: GetterTree<PatchState, RootState> = {
-    patchIDs: state => state.patchIDs,
-};
-
-export const PatchModule: Module<PatchState, RootState> = {
-    namespaced,
-    state,
-    getters,
-    actions,
-    mutations
-};
+}

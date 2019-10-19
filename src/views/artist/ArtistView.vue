@@ -1,9 +1,11 @@
 <script lang="ts">
 import { Component, Vue, Mixins } from 'vue-property-decorator';
+import { Band } from '@/model/Model';
 import { Constants } from '@/util/Constants';
 
 @Component({components: { }, })
-export default class OverviewView extends Mixins(Constants) { 
+export default class ArtistView extends Mixins(Constants) { 
+  artist : Band
 
 
  }
@@ -11,9 +13,8 @@ export default class OverviewView extends Mixins(Constants) {
 
 
 <template>
-  <div>
-    <vue-headful :title="TITLE_PREFIX+'Overview'"/>
-    <h1>This is an overview page</h1>
+  <div><vue-headful :title="TITLE_PREFIX + 'Artist ' + (artist ? artist.name : '')"/>
+    <h1>This is an artist page</h1>
   </div>
 </template>
 

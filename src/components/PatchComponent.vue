@@ -1,50 +1,31 @@
 <script lang="ts">
-    import { Component, Prop, Vue } from 'vue-property-decorator';
-    import { Getter } from 'vuex-class';
-    import { User } from '@/model/User';
-    import { Patch } from '@/model/Patch';
-    const namespace: string = 'AuthModule' //Vuex module namespace
+    import { Component, Prop, Vue, Mixins } from 'vue-property-decorator';
+    import { getModule } from 'vuex-module-decorators';
+    import PatchModule from '@/store/modules/PatchModule';
+    import { UserUtil } from '@/util/UserUtil';
+    import { ImageUtil } from '@/util/ImageUtil';
+    import { User, Patch } from '@/model/Model';
 
     @Component
-    export default class PatchComponent extends Vue {
+    export default class PatchComponent extends Mixins(UserUtil, ImageUtil) {
         @Prop() private patch?: Patch;
-
-        //Vuex getter binding generated properties
-        @Getter('loggedInUser', { namespace: 'AuthModule' }) 
-        private loggedInUser?: User|null;
-        
-        @Getter('patchIDs', { namespace: 'PatchModule' })
-        private patchIDsOfLoggedInUser?: number[];
-
-        get userHasPatch() : boolean {
-            if (this.patch && this.patchIDsOfLoggedInUser) {
-                return this.patchIDsOfLoggedInUser.includes(this.patch.id);
-            } else {
-                return false;
-            }
-        }
 
         private addToCollection() : void {
             if (this.patch) {
-                this.$store.dispatch('PatchModule/addPatchToCollection', this.patch.id)
+                getModule(PatchModule).addPatchToCollection(this.patch.id)
                 .then(response => {})
-                .catch(error => {})
+                .catch(error => {});
             }
         }
 
         private removeFromCollection() : void {
             if (this.patch) {
-                this.$store.dispatch('PatchModule/removePatchFromCollection', this.patch.id)
-                .then(response => {})
+                getModule(PatchModule).removePatchFromCollection(this.patch.id)
+                .then(response => {
+                    this.$emit('removeFromCollection');
+                })
                 .catch(error => {});
-                this.$emit('removeFromCollection');
             }
-        }
-
-        //static utiliy method? 
-        private getThumbnailPathFromURL(url : string) : string {
-            let index : number = url.lastIndexOf('/') + 1;
-            return url.slice(0, index) + 's_' + url.slice(index);
         }
     }
 </script>
@@ -59,7 +40,7 @@
             <img :src="getThumbnailPathFromURL(patch.image)"/>
         </router-link>
         <div id="buttonsDiv" v-if="loggedInUser">
-            <b-button v-if="userHasPatch" @click="removeFromCollection">Remove from Collection</b-button>
+            <b-button v-if="loggedInUserHasPatch(this.patch)" @click="removeFromCollection">Remove from Collection</b-button>
             <b-button v-else @click="addToCollection">Add to Collection</b-button>
         </div>
     </div>

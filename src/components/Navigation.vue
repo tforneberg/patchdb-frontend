@@ -1,26 +1,17 @@
 <script lang="ts">
-    import { Component, Prop, Vue } from 'vue-property-decorator';
-    import { Getter } from 'vuex-class';
-    import { User } from '@/model/User';
-    const namespace: string = 'AuthModule' //Vuex module namespace
+    import { Component, Prop, Vue, Mixins } from 'vue-property-decorator';
+    import { getModule } from 'vuex-module-decorators';
+    import AuthModule from '@/store/modules/AuthModule';
+    import { User } from '@/model/Model';
+    import { UserUtil } from '@/util/UserUtil';
 
     @Component
-    export default class Navigation extends Vue {
+    export default class Navigation extends Mixins(UserUtil) {
         private menuCollapsed : boolean = true;
         private showProfileDropdown : boolean = false;
 
-        //injected properties
-        @Prop() 
-        private title?: string;
+        @Prop() private title?: string;
 
-        //Vuex getter binding generated properties
-        @Getter('loggedInUser', { namespace }) 
-        private loggedInUser?: User|null;
-        
-        @Getter('isLoggedIn', { namespace })
-        private isLoggedIn?: boolean;
-
-        //Methods
         toggleShowMenu() : void {
             this.menuCollapsed = !this.menuCollapsed
         }
@@ -30,9 +21,10 @@
         }
 
         logout() : void {
-            this.$store.dispatch('AuthModule/logout').then(() => {
+            getModule(AuthModule).logout()
+            .then(() => {
                 this.$router.push('/');
-            })
+            });
         }
     }
 </script>
@@ -62,11 +54,12 @@
                     </template>
                     <b-dropdown-item to="/users">Users</b-dropdown-item>
                 </b-nav-item-dropdown>
+                 <b-nav-item to="/news">News</b-nav-item>
             </b-navbar-nav> 
 
             <!-- Right aligned nav items -->
             <b-navbar-nav class="ml-auto">
-                <b-nav-item-dropdown id="languageDropdown" right>
+                <b-nav-item-dropdown v-if="false" id="languageDropdown" right>
                     <template slot="button-content">
                         Language
                     </template>
@@ -84,6 +77,7 @@
                     <b-dropdown-item to="/overview">Overview</b-dropdown-item>
                     <b-dropdown-item :to="'/user/'+loggedInUser.id" exact>My Profile</b-dropdown-item>
                     <b-dropdown-item :to="'/user/'+loggedInUser.id+'/collection'" exact>My Collection</b-dropdown-item>
+                    <b-dropdown-item v-if="userIsAdminOrMod()" to="/patches/approvalNeeded" >Approve new patches</b-dropdown-item>
                     <b-dropdown-item to="/settings">Settings</b-dropdown-item>
                     <b-dropdown-divider></b-dropdown-divider>
                     <b-dropdown-item @click="logout">Logout</b-dropdown-item>

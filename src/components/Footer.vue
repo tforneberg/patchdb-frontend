@@ -3,10 +3,8 @@
 
     @Component
     export default class Footer extends Vue {
-        //props
         private menuCollapsed : boolean = true;
 
-        //methods
         toggleShowMenu() : void {
             this.menuCollapsed = !this.menuCollapsed
         }

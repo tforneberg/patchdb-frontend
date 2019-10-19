@@ -7,12 +7,14 @@ import { Constants } from '@/util/Constants';
     
   },
 })
-export default class NotFoundView extends Mixins(Constants) {}
+export default class TermsAndConditionsView extends Mixins(Constants) {
+
+}
 </script>
 
 <template>
-  <div class="about text-center">
-    <vue-headful :title="TITLE_PREFIX+'404 Not Found '"/>
-    <h1>Resource not found (Error 404)</h1>
+  <div>
+    <vue-headful :title="TITLE_PREFIX+'Terms and conditions'"/>
+    <h1>Terms and conditions</h1>
   </div>
 </template>

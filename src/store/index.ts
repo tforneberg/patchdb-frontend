@@ -1,9 +1,5 @@
-import { RootState } from '@/store';
 import Vue from 'vue';
 import Vuex, { StoreOptions } from 'vuex';
-
-import { AuthModule } from './modules/AuthModule';
-import { PatchModule } from './modules/PatchModule';
 
 Vue.use(Vuex);
 
@@ -22,10 +18,6 @@ export interface RootState {
 }
 
 const storeOptions : StoreOptions<RootState> = {
-  modules: {
-    AuthModule,
-    PatchModule,
-  },
   state: {
     version: '1.0.0',
     backend: 'http://localhost:5000/'

@@ -1,9 +1,12 @@
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator';
-import { LoginRequestData } from '@/model/RequestData';
+import { Component, Vue, Mixins } from 'vue-property-decorator';
+import { Constants } from '@/util/Constants';
+import { getModule } from 'vuex-module-decorators';
+import AuthModule from '@/store/modules/AuthModule';
+import { LoginRequestData } from '@/model/Model';
 
 @Component({ components: { }, })
-export default class LoginView extends Vue {
+export default class LoginView extends Mixins(Constants) {
   private requestData = new LoginRequestData();
 
   private showClientSideValidationFaliedMessage = false;
@@ -20,9 +23,10 @@ export default class LoginView extends Vue {
     //validate form on client
     this.$validator.validate().then(formIsValid => {
       if (formIsValid) {
-        this.$store.dispatch('AuthModule/login', this.requestData)
+        getModule(AuthModule).login(this.requestData)
           .then(() => this.$router.push('/'))
           .catch(err => this.showServerSideLoginFailedMessage = true)
+        
       } else {
         this.showClientSideValidationFaliedMessage = true;
       }
@@ -36,6 +40,7 @@ export default class LoginView extends Vue {
 </script>
 
 <template><div>
+  <vue-headful :title="TITLE_PREFIX+'Login'"/>
   <div id="loginForm">
     <h4>Login</h4>
     <form @submit="onSubmit" novalidate @input="resetFailMessages">

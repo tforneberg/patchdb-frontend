@@ -1,22 +1,28 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import store from './store/index';
+import { getModule } from 'vuex-module-decorators';
+import AuthModule from '@/store/modules/AuthModule';
 
-import AddPatchView from './views/AddPatchView.vue';
-import ArtistView from './views/ArtistView.vue';
-import CollectionView from './views/CollectionView.vue';
-import EditProfileView from './views/EditProfileView.vue';
+import AddPatchView from './views/patch/AddPatchView.vue';
+import ArtistView from './views/artist/ArtistView.vue';
+import CollectionView from './views/collection/CollectionView.vue';
+import EditProfileView from './views/user/EditProfileView.vue';
 import HomeView from './views/HomeView.vue';
-import LatestView from './views/LatestView.vue';
-import UsersView from './views/UsersView.vue';
-import LoginView from './views/LoginView.vue';
+import ImprintView from './views/ImprintView.vue';
+import TermsAndConditionsView from './views/TermsAndConditionsView.vue';
+import PatchListView from './views/patch/PatchListView.vue';
+import UserListView from './views/user/UserListView.vue';
+import NewsListView from './views/news/NewsListView.vue';
+import NewsDetailsView from './views/news/NewsDetailsView.vue';
+import LoginView from './views/user/LoginView.vue';
 import NotFoundView from './views/NotFoundView.vue';
 import OverviewView from './views/OverviewView.vue';
-import PatchDetailsView from './views/PatchDetailsView.vue';
-import RegisterView from './views/RegisterView.vue';
-import RegistrationSuccessful from './views/RegistrationSuccessfulView.vue';
-import SettingsView from './views/SettingsView.vue';
-import ShowUserView from './views/ShowUserView.vue';
+import PatchDetailsView from './views/patch/PatchDetailsView.vue';
+import RegisterView from './views/user/RegisterView.vue';
+import RegistrationSuccessful from './views/user/RegistrationSuccessfulView.vue';
+import SettingsView from './views/user/SettingsView.vue';
+import ShowUserView from './views/user/ShowUserView.vue';
+import { UserStatus } from './model/Model';
 
 Vue.use(Router);
 
@@ -25,10 +31,11 @@ const router = new Router({
   routes: [
     //public routes
     { path: '/', name: 'home', component: HomeView, },
-    { path: '/latest', name: 'latest', component: LatestView, },
+    { path: '/latest', name: 'latest', component: PatchListView, },
     { path: '/login', name: 'login', component: LoginView, meta: { reqLoggedOut: true }, },
     { path: '/register', name: 'register', component: RegisterView, meta: { reqLoggedOut: true }, },
     { path: '/registrationSuccessful', name: 'registrationSuccessful', component: RegistrationSuccessful, },
+    { path: '/news', name: 'newsList', component: NewsListView, },
     { path: '/about',
       name: 'about',
       // route level code-splitting
@@ -36,17 +43,21 @@ const router = new Router({
       // which is lazy-loaded when the route is visited.
       component: () => import(/* webpackChunkName: "about" */ './views/AboutView.vue'),
     },
+    { path: '/imprint', name: 'imprint', component: ImprintView, props: true },
+    { path: '/terms', name: 'terms', component: TermsAndConditionsView, props: true },
     { path: '/artist/:id', name: 'artist', component: ArtistView, props: true, },
     { path: '/patch/:id', name: 'patch', component: PatchDetailsView, props: true, },
-
+    { path: '/news/:id', name: 'news', component: NewsDetailsView, props: true, },
     //access for all logged in users
-    { path: '/users', name: 'users', component: UsersView, meta: { reqAuth: true } },
+    { path: '/users', name: 'users', component: UserListView, meta: { reqAuth: true } },
     { path: '/overview', name: 'overview', component: OverviewView, meta: { reqAuth: true }  },
     { path: '/user/:id', name: 'user', component: ShowUserView, props: true, meta: { reqAuth: true }, },
     { path: '/user/:id/collection', name: 'collection', component: CollectionView, props: true, meta: { reqAuth: true }, },
     { path: '/user/edit/profile', name: 'editProfile', component: EditProfileView, meta: { reqAuth: true }, },
     { path: '/settings', name: 'settings', component: SettingsView, meta: { reqAuth: true }, },
     { path: '/add/patch', name: 'addPatch', component: AddPatchView, meta: { reqAuth: true }, },
+    //access for admin/mods only
+    { path: '/patches/approvalNeeded', name: 'patchesWithApprovalNeeded', component: PatchListView, meta: { reqAdminOrMod: true }, props: { endpointUrl: 'api/patches/approvalNeeded' }},
 
     //NotFoundView
     { path: '*', component: NotFoundView }
@@ -55,22 +66,39 @@ const router = new Router({
 
 /**
 *  check if user is allowed to go to the desired route
-*  "to" argument: route the user wants to go to 
-*  "from" argument: route the user comes from
-*  "next" a function that needs to be called. 
+*  "to" argument: route the user wants to go to, "from" argument: route the user comes from
 *   if next() is called, the navigation is confirmed. if next('/somePath') is called, the user gets redirected to 'somePath' 
 */
 router.beforeEach((to, from, next) => {
   if(to.matched.some(record => record.meta.reqAuth)) {
-    //if the desired routed requires authentication, check if user is logged in
-    if (store.getters['AuthModule/isLoggedIn']) {
+    if (getModule(AuthModule).isLoggedIn) { //TODO use new getModule syntax
       next(); 
     } else {
       next('/login');
     }
   } else if(to.matched.some(record => record.meta.reqLoggedOut)) {
-    //if the desired routed requires being logged out, check if user is logged out
-    if (!store.getters['AuthModule/isLoggedIn']) {
+    if (!getModule(AuthModule).isLoggedIn) {
+      next();
+    } else {
+      next('/');
+    }
+  } else if(to.matched.some(record => record.meta.reqAdminOrMod)) {
+    let status: UserStatus = getModule(AuthModule).loggedInUser.status;
+    if (status == UserStatus.admin || status == UserStatus.mod) {
+      next();
+    } else {
+      next('/');
+    }
+  } else if (to.matched.some(record => record.meta.reqMod)) {
+    let status: UserStatus = getModule(AuthModule).loggedInUser.status;
+    if (status == UserStatus.mod) {
+      next();
+    } else {
+      next('/');
+    }
+  } else if (to.matched.some(record => record.meta.reqAdmin)) {
+    let status: UserStatus = getModule(AuthModule).loggedInUser.status;
+    if (status == UserStatus.admin) {
       next();
     } else {
       next('/');

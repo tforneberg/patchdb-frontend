@@ -1,23 +1,19 @@
 <script lang="ts">
     import { Component, Prop, Vue, Mixins } from 'vue-property-decorator';
-    import { User } from '@/model/Model';
+    import { News, User } from '@/model/Model';
     import { UserUtil } from '@/util/UserUtil';
-    import { ImageUtil } from '@/util/ImageUtil';
 
     @Component
-    export default class UserComponent extends Mixins(UserUtil, ImageUtil) {
-        @Prop() private user?: User;
+    export default class UserComponent extends Mixins(UserUtil) {
+        @Prop() private news?: News;
 
     }
 </script>
 
 <template>
-<b-card id="userCard" >
-    <div v-if="user" id="userComponent">
-        <h3><router-link :to="'/user/'+user.id">{{user.name}}</router-link></h3>
-        <router-link :to="'/user/'+user.id">
-            <img :src="getThumbnailPathFromURL(user.image)"/>
-        </router-link>
+<b-card id="newsCard" >
+    <div v-if="news" id="newsComponent">
+        <h3><router-link :to="'/news/'+news.id">{{news.title}}</router-link></h3>
         <div id="buttonsDiv" v-if="loggedInUser">
            <!-- Add buttons for logged in users here -->
         </div>
