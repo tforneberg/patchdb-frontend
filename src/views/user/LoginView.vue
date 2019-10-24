@@ -5,12 +5,13 @@ import { getModule } from 'vuex-module-decorators';
 import AuthModule from '@/store/modules/AuthModule';
 import { LoginRequestData } from '@/model/Model';
 
-@Component({ components: { }, })
+@Component({ components: {  }, })
 export default class LoginView extends Mixins(Constants) {
   private requestData = new LoginRequestData();
 
-  private showClientSideValidationFaliedMessage = false;
-  private showServerSideLoginFailedMessage = false;
+  private loader:any;
+  private showClientSideValidationFaliedMessage:boolean = false;
+  private showServerSideLoginFailedMessage:boolean = false;
 
   resetFailMessages() : void {
     this.showServerSideLoginFailedMessage = false;
@@ -23,10 +24,16 @@ export default class LoginView extends Mixins(Constants) {
     //validate form on client
     this.$validator.validate().then(formIsValid => {
       if (formIsValid) {
+        this.loader = this.$loading.show();
         getModule(AuthModule).login(this.requestData)
-          .then(() => this.$router.push('/'))
-          .catch(err => this.showServerSideLoginFailedMessage = true)
-        
+          .then(() => { 
+            if (this.loader) this.loader.hide();
+            this.$router.push('/');
+          })
+          .catch((err) => {
+            if (this.loader) this.loader.hide();
+            this.showServerSideLoginFailedMessage = true;
+          });
       } else {
         this.showClientSideValidationFaliedMessage = true;
       }

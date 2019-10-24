@@ -46,6 +46,7 @@
                     </template>
                     <b-dropdown-item to="/latest">Latest</b-dropdown-item>
                     <b-dropdown-item to="/hottest">Hottest</b-dropdown-item>
+                    <b-dropdown-item to="/patches/search">Search</b-dropdown-item>
                     <b-dropdown-item to="/add/patch" v-if="isLoggedIn">Add Patch</b-dropdown-item>
                 </b-nav-item-dropdown>
                 <b-nav-item-dropdown id="languageDropdown" right>
@@ -54,7 +55,7 @@
                     </template>
                     <b-dropdown-item to="/users">Users</b-dropdown-item>
                 </b-nav-item-dropdown>
-                 <b-nav-item to="/news">News</b-nav-item>
+                <b-nav-item to="/news">News</b-nav-item>
             </b-navbar-nav> 
 
             <!-- Right aligned nav items -->

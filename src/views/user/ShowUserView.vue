@@ -73,10 +73,18 @@ export default class ShowUserView extends Mixins(UserUtil, Constants) {
         <vue-headful :title="TITLE_PREFIX+'User: '+user.name"/>
         <h1>Name: {{user.name}}</h1>
         <h3>Role: {{user.status}}</h3>
-        <b-button v-if="isLoggedInUser(user)" @click="editProfileButtonClicked()">Edit</b-button>
-        <b-button v-if="showMakeModButton" @click="makeMod()">Set status to "Moderator"</b-button>
-        <b-button v-if="showMakeUserButton" @click="makeUser()">Set status to "User"</b-button>
-        <b-button v-if="showSetBlockedButton" @click="setBlocked()">Block this user</b-button>
-        <b-button v-if="showUnblockButton" @click="unblock()">Unblock this user</b-button>
+        <p>
+            <ul>
+                <li><router-link :to="{name: 'collection', params: {id: this.id} }">{{user.name}}'s Collection</router-link></li>
+                <li><router-link :to="{name: 'patchesCreatedByUser', params: {id: this.id} }">Patches created by {{user.name}}</router-link></li>
+            </ul>
+        </p>
+        <p>
+            <b-button v-if="isLoggedInUser(user)" @click="editProfileButtonClicked()">Edit</b-button>
+            <b-button v-if="showMakeModButton" @click="makeMod()">Set status to "Moderator"</b-button>
+            <b-button v-if="showMakeUserButton" @click="makeUser()">Set status to "User"</b-button>
+            <b-button v-if="showSetBlockedButton" @click="setBlocked()">Block this user</b-button>
+            <b-button v-if="showUnblockButton" @click="unblock()">Unblock this user</b-button>
+        </p>
     </div>
 </template>

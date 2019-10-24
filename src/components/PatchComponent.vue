@@ -10,6 +10,14 @@
     export default class PatchComponent extends Mixins(UserUtil, ImageUtil) {
         @Prop() private patch?: Patch;
 
+        private imageIsLoading:boolean;
+        private loader:any;
+
+        render() : void {
+            this.imageIsLoading = true;
+            this.loader = this.$loading.show({container: this.$refs.loadingContainer});
+        }
+
         private addToCollection() : void {
             if (this.patch) {
                 getModule(PatchModule).addPatchToCollection(this.patch.id)
@@ -27,17 +35,22 @@
                 .catch(error => {});
             }
         }
+
+        private imageLoadingFinished() : void {
+            this.imageIsLoading = false;
+            if (this.loader) this.loader.hide();
+        }
     }
 </script>
 
 <template>
 <b-card id="patchCard" >
-    <div v-if="patch" id="patchComponent">
+    <div v-if="patch" id="patchComponent" ref="loadingContainer">
         <h3><span v-if="patch.band">{{patch.band.name}} - </span><router-link :to="'/patch/'+patch.id">{{patch.name}}</router-link></h3>
         <p>Submitted<span v-if="patch.userInserted"> by <router-link :to="'/user/'+patch.userInserted.id">{{patch.userInserted.name}}</router-link></span> on {{patch.dateInserted}}</p>
         <p>{{patch.description}}</p>
         <router-link :to="'/patch/'+patch.id">
-            <img :src="getThumbnailPathFromURL(patch.image)"/>
+            <img :src="getThumbnailPathFromURL(patch.image)" @load="imageLoadingFinished"/>
         </router-link>
         <div id="buttonsDiv" v-if="loggedInUser">
             <b-button v-if="loggedInUserHasPatch(this.patch)" @click="removeFromCollection">Remove from Collection</b-button>

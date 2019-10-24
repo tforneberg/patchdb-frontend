@@ -16,7 +16,7 @@
     <div v-if="user" id="userComponent">
         <h3><router-link :to="'/user/'+user.id">{{user.name}}</router-link></h3>
         <router-link :to="'/user/'+user.id">
-            <img :src="getThumbnailPathFromURL(user.image)"/>
+            <img :src="user.image != null ? getThumbnailPathFromURL(user.image) : require('@/assets/defaultUser.png')"/>
         </router-link>
         <div id="buttonsDiv" v-if="loggedInUser">
            <!-- Add buttons for logged in users here -->

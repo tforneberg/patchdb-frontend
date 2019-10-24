@@ -9,6 +9,7 @@ import SortingComponent from '@/components/general/SortingComponent.vue';
 @Component({ components: { PatchComponent, SortingComponent }, })
 export default class PatchListView extends Mixins(Constants) {
   @Prop({default: 'api/patches'}) endpointUrl:string;
+  @Prop({default: 'Patches'}) title:string;
 
   private patches:Patch[] = [];
 
@@ -25,7 +26,8 @@ export default class PatchListView extends Mixins(Constants) {
   }
 
   private loadPatches() : void {
-    this.axios.get(this.endpointUrl+'?page='+this.currentPage+'&size='+this.size+this.sortingComponent.getSortUrlString())
+    let loader = this.$loading.show({container: this.$refs.loadingContainer});
+    this.axios.get(this.endpointUrl+this.getPageAndSizeUrlString()+this.sortingComponent.getSortUrlString())
       .then(response => {
         var newPatches = response.data;
         this.patches.push(...newPatches);
@@ -34,8 +36,12 @@ export default class PatchListView extends Mixins(Constants) {
           this.loadNextButtonVisible = false;
         }
       })
-      .catch(err => { //TODO error message?
-      });
+      .catch(err => { /*TODO error message?*/ })
+      .finally(() => loader.hide());
+  }
+
+  private getPageAndSizeUrlString() : string {
+    return '?page='+this.currentPage+'&size='+this.size; //TODO move to own component ... 
   }
 
   private sortingChanged() {
@@ -48,11 +54,11 @@ export default class PatchListView extends Mixins(Constants) {
 
 <template>
   <div class="text-center">
-    <vue-headful :title="TITLE_PREFIX+'Latest Patches'"/>
-    <h1>Patches</h1>
+    <vue-headful :title="TITLE_PREFIX+this.title"/>
+    <h1>{{this.title}}</h1>
     <SortingComponent :sortingProps="sortingProps" @changed="sortingChanged()" ref="sortingComponent" />
 
-    <div class="row">
+    <div class="row" ref="loadingContainer">
       <div class="col-12 col-md-6 col-lg-4 col-xl-3" v-for="patch in patches" v-bind:key="patch.id">
         <PatchComponent class="mx-3 my-3" v-bind:patch="patch"/>
       </div>

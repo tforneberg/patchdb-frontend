@@ -2,8 +2,9 @@
 import { Component, Vue, Mixins } from 'vue-property-decorator';
 import {Constants } from '@/util/Constants';
 import { Patch, Band } from '@/model/Model';
+import UploadImageComponent from '@/components/general/UploadImageComponent.vue';
 
-@Component({components: { },})
+@Component({components: { UploadImageComponent },})
 export default class AddPatchView extends Mixins(Constants) {
 	private patch = new Patch();
 
@@ -14,6 +15,7 @@ export default class AddPatchView extends Mixins(Constants) {
 	private showServerSideValidationFailedMessage = false;
 	private showSuccessMessage = false;
 	private isUploading = false;
+	private loader:any;
 
 	private bands : Array<Band> = new Array();
 
@@ -35,30 +37,8 @@ export default class AddPatchView extends Mixins(Constants) {
 		this.showSuccessMessage = false;
 	}
 
-	onFileChange(event : any) : void {
-		var files = event.target.files || event.dataTransfer.files;
-		if (!files.length) {
-			this.image = '';
-			this.file = null;
-			return;
-		}
-		this.file = files[0];
-		this.createImage(files[0]);
-	}
-
-	createImage(file : File) : void {
-		var addPatchView = this;
-		var fileReader = new FileReader();
-
-		fileReader.onload = ((event : ProgressEvent) => {
-			var fileReader:any = event.target;
-			if (fileReader != null && fileReader.result != null) {
-				addPatchView.image = fileReader.result;
-			} else {
-				addPatchView.image = '';
-			}
-		});
-		fileReader.readAsDataURL(file);
+	imageFileChanged(newFile:File) : void {
+		this.file = newFile;
 	}
 
 	onSubmit(event: any) : void {
@@ -69,6 +49,7 @@ export default class AddPatchView extends Mixins(Constants) {
 		//validate form on client
 		this.$validator.validate().then(formIsValid => {
 			if (formIsValid && this.file != null) {
+				this.loader = this.$loading.show();
 				this.isUploading = true;
 
 				let patchDataJson = JSON.stringify(this.patch);
@@ -87,7 +68,7 @@ export default class AddPatchView extends Mixins(Constants) {
 				}).catch(err => {
 					this.showServerSideValidationFailedMessage = true;
 					this.isUploading = false;
-				}); 
+				}).finally(() => { if (this.loader) this.loader.hide() }); 
 			} else {
 				this.showClientSideValidationFaliedMessage = true;
 			}
@@ -122,26 +103,11 @@ export default class AddPatchView extends Mixins(Constants) {
 					<option value="woven">Woven</option>
 				</select>
 			</div>
-			
-			<!-- Image upload -->
-			<div class="form-group" id="fileInputGroup">
-				<label for="image">Image:</label>
-				<div class="custom-file">
-					<input type="file" class="custom-file-input" :class="{ invalid : showServerSideValidationFailedMessage }" 
-					id="image" name="image" v-validate="'required|mimes:image/png,image/jpeg'" data-vv-as="image" accept="image/png, image/jpeg" @change="onFileChange">
-					<label v-if="file" class="custom-file-label" for="image" :class="{valid : fields.image && fields.image.valid, invalid: errors.has('image')}">{{file.name}}</label>
-					<label v-else class="custom-file-label" for="image" :class="{valid : fields.image && fields.image.valid, invalid: errors.has('image')}">Choose file...</label>
-					<small v-show="errors.has('image')" class="invalidMessage form-text">{{errors.first('image')}}</small>
-				</div>
-			</div>
 
-			<!-- Image preview -->
-			<div class="container text-center mb-3" v-if="image">
-				<img id="imagePreview" :src="image" />
-			</div>
+			<upload-image-component id="uploadImageComponent" @change="imageFileChanged" :invalid="showServerSideValidationFailedMessage"/><!-- TODO v-validate...-->
 
-			<!-- Error alerts -->
-			<div v-if="showServerSideValidationFailedMessage" id="serverSideLoginFailedMessage" class="alert alert-danger mx-sm-5 text-center" role="alert">
+			<!-- Error alerts --> <!-- TODO make components from these -->
+			<div v-if="showServerSideValidationFailedMessage" id="serverSideValidationFailedMessage" class="alert alert-danger mx-sm-5 text-center" role="alert">
 				Patch could not be added.
 			</div>
 			<div v-if="showClientSideValidationFaliedMessage" id="clientSideFailedMessage" class="alert alert-danger mx-sm-5 text-center" role="alert">
@@ -153,7 +119,7 @@ export default class AddPatchView extends Mixins(Constants) {
 				<div><button id="submitButton" type="submit" :disabled="isUploading" class="btn btn-primary">Submit</button></div>
 			</div>
 
-			<!-- Uploading alert -->
+			<!-- Uploading alert --> <!-- TODO make components from these -->
 			<div v-if="isUploading" id="uploadingMessage" class="alert alert-info mx-sm-3 text-center" role="alert">
 				Uploading... please wait.
 			</div>
@@ -179,10 +145,5 @@ export default class AddPatchView extends Mixins(Constants) {
 	margin: 6px;
 	margin-bottom: 12px;
 	width: 200px;
-}
-
-#imagePreview {
-	width: 100%;
-	max-width: 400px;
 }
 </style>
