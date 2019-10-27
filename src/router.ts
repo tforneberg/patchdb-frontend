@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import { getModule } from 'vuex-module-decorators';
 import AuthModule from '@/store/modules/AuthModule';
+import { UserUtil } from '@/util/UserUtil';
 
 import AddPatchView from './views/patch/AddPatchView.vue';
 import ArtistView from './views/artist/ArtistView.vue';
@@ -77,7 +78,7 @@ const router = new Router({
 */
 router.beforeEach((to, from, next) => {
   if(to.matched.some(record => record.meta.reqAuth)) {
-    if (getModule(AuthModule).isLoggedIn) { //TODO use new getModule syntax
+    if (getModule(AuthModule).isLoggedIn) {
       next(); 
     } else {
       next('/login');

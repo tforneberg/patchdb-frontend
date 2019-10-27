@@ -1,46 +1,48 @@
-<script>
+<script lang="ts">
+import Vue from 'vue';
 import Navigation from '@/components/Navigation.vue';
 import Footer from '@/components/Footer.vue';
-import axios from 'axios';
+import { getModule } from 'vuex-module-decorators';
+import AuthModule from '@/store/modules/AuthModule';
+import { UserUtil } from '@/util/UserUtil';
+import { Mixins, Component } from 'vue-property-decorator';
 
-export default {
-  components: {
-    Navigation, Footer
-  },
-  computed: {
-    isLoggedIn : function() { return this.$store.getters.isLoggedIn }
-  },
-  methods: {
-    logout: function () {
-      this.$store.dispatch('logout').then(() => { this.$router.push('/login') });
+@Component({components: {Navigation, Footer}})
+export default class App extends Mixins(UserUtil) {
+
+    created() {
+        this.configureAxiosRequestInterceptors();
+        this.configureAxiosResponseInterceptors();
     }
-  },
-  created: function () {
-    //get csrf token
-    // axios({url: '', method: 'GET'});
 
-    //if the access token has expired and server sends 401, log the user out (= destroy the local token)
-    this.axios.interceptors.response.use(undefined, function (err) {
-      return new Promise(function (resolve, reject) {
-        if (err.status === 401 && err.config && !err.config.__isRetryRequest) {
-          logout();
-        }
-        throw err;
-      });
-    });
+    configureAxiosRequestInterceptors() {
+        let vue = this;
 
-    //if no csrf cookie is avaialbe, first grab it from the backend before making any non-get requests
-    this.axios.interceptors.request.use(async function(config) {
-      if (document.cookie.indexOf('XSRF-TOKEN') !== -1 || config === undefined) { return config; }
-      let noGET = config.method.localeCompare('get', undefined, {sensitivity: "accent"}) != 0;
-        if (noGET) {
-          const response = await axios.get(''); //gets the token
-          return config;
-        } else {
-          return config;
-        }
-    });
-  }
+        //get the csrf cookie with an extra get-request before making any non-get requests
+        this.axios.interceptors.request.use(async function(requestConfig) {
+            let noXSRFTokenSavedYet:boolean = document.cookie.indexOf('XSRF-TOKEN') !== -1;
+            let isNoGETRequest:boolean = requestConfig !== undefined && requestConfig.method.localeCompare('get', undefined, {sensitivity: "accent"}) != 0;
+            if (noXSRFTokenSavedYet && isNoGETRequest)
+                await vue.axios.get(''); 
+            return requestConfig;
+        });
+    }
+
+    configureAxiosResponseInterceptors() {
+        let vue = this;
+
+        //log user out if server sends 401 (unauthorized => token expired)
+        this.axios.interceptors.response.use(undefined, function (err) {
+            return new Promise(function (resolve, reject) {
+                if (err.response.status === 401) {
+                    vue.logout();
+                    vue.$router.push("/login");
+                }
+                throw err;
+            });
+        });
+    }
+
 }
 
 </script>
@@ -60,7 +62,10 @@ export default {
 </template>
 
 <style lang="scss">
+
+
 #mainCard {
+    min-height: 300px;
   // background-attachment: fixed;
   // background-size: 100%;
   // background-image: url('assets/backgroundDenim.jpg');

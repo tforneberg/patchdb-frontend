@@ -255,3 +255,7 @@ body {
     color: $errorColor;
     margin: auto;
   }
+
+  .dropdown-item {
+    color: $gray-200 !important;
+  }

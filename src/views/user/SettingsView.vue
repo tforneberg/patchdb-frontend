@@ -3,18 +3,25 @@ import { Component, Vue, Mixins } from 'vue-property-decorator';
 import { Constants } from '@/util/Constants';
 import { UserUtil } from '@/util/UserUtil';
 import { User, ChangePasswordRequestData } from '@/model/Model';
+import UploadImageComponent from '@/components/general/UploadImageComponent.vue';
 
-@Component({components: { }, })
+@Component({components: { UploadImageComponent }, })
 export default class SettingsView extends Mixins(UserUtil, Constants) { 
     private requestData = new ChangePasswordRequestData();
 
-    private showClientSideValidationFaliedMessage = false;
-    private showServerSideErrorMessage = false;
+    private showClientSideValidationFaliedMessage:boolean = false;
+    private showServerSideErrorMessage:boolean = false;
+    private showImageUploadSuccessMessage:boolean = false;
+    private imageFile:File;
 
     private resetFailMessages() : void {
         this.showServerSideErrorMessage = false;
         this.showClientSideValidationFaliedMessage = false;
     }
+
+    private imageFileChanged(newFile:File) : void {
+		this.imageFile = newFile;
+	}
 
     private onChangePassword (event: any) : void {
         event.preventDefault();
@@ -37,29 +44,27 @@ export default class SettingsView extends Mixins(UserUtil, Constants) {
     }
 
     private onSubmitImageUpload(event : any) : void {
-        event.preventDefault();
+        if (this.loggedInUser) {
+            let loader = this.$loading.show();
+            var requestObject:FormData = new FormData();
+            requestObject.append('file', this.imageFile);
 
-        this.$validator.validate().then(formIsValid => {
-            if (formIsValid && this.loggedInUser) {
-                var requestObject:any;
-                //TODO create request object with image 
-
-                this.axios.post('api/users/'+this.loggedInUser.id+'/uploadImage', requestObject)
-                    .then(response => {
-                        //TODO show success message, reset objects for next upload.
-                    })
-                    .catch (err => {
-                        console.log(err);
-                        this.showServerSideErrorMessage = true;
-                    })
-            } else {
-                this.showClientSideValidationFaliedMessage = true;
-            }
-        });
+            this.axios.post('api/users/'+this.loggedInUser.id+'/uploadImage', requestObject, 
+                    { headers: {'Content-Type': 'multipart/form-data'} }
+                ).then(response => {
+                    this.showImageUploadSuccessMessage = true;
+                    //TODO show success message, reset objects for next upload.
+                })
+                .catch (err => {
+                    console.log(err);
+                    this.showServerSideErrorMessage = true;
+                }).finally(() => loader.hide());
+        } else {
+            this.showClientSideValidationFaliedMessage = true;
+        }
     }
 }
 </script>
-
 
 <template>
     <div>
@@ -91,10 +96,15 @@ export default class SettingsView extends Mixins(UserUtil, Constants) {
         </form>
 
         <h4>Upload Image</h4>
-        <p>Insert Image upload component when implemented</p>
+        <upload-image-component id="uploadImageComponent" class="form-group col-md-4 col-sm-6" @change="imageFileChanged" :invalid="showServerSideErrorMessage"/><!-- TODO v-validate...-->
+        <div class="col-md-4 col-sm-6">
+            <div><button type="submit" class="btn btn-primary" @click="onSubmitImageUpload">Save</button></div>
+        </div>
+        <div v-if="showImageUploadSuccessMessage" id="successMessage" class="alert alert-success mx-sm-3 text-center" role="alert">
+            Image upload was successful!
+        </div>
     </div>
 </template>
-
 
 <style lang="scss" scoped>
 

@@ -53,8 +53,10 @@
             <img :src="getThumbnailPathFromURL(patch.image)" @load="imageLoadingFinished"/>
         </router-link>
         <div id="buttonsDiv" v-if="loggedInUser">
-            <b-button v-if="loggedInUserHasPatch(this.patch)" @click="removeFromCollection">Remove from Collection</b-button>
-            <b-button v-else @click="addToCollection">Add to Collection</b-button>
+            <transition name="fade" mode="out-in">
+                <b-button key="1" v-if="loggedInUserHasPatch(this.patch)" @click="removeFromCollection">Remove from Collection</b-button>
+                <b-button ley="2" v-else @click="addToCollection">Add to Collection</b-button>
+            </transition>
         </div>
     </div>
 </b-card>

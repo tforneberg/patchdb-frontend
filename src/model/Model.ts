@@ -1,6 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
-// Generated using typescript-generator version 2.17.558 on 2019-10-15 22:25:18.
+// Generated using typescript-generator version 2.17.558 on 2019-10-27 02:20:39.
 
 export class Band {
     id: number;
@@ -23,6 +23,8 @@ export class News {
 
 export class Patchable {
     operation: HttpPatchOperation;
+    path: string;
+    value: string;
 }
 
 export class Patch extends Patchable {
@@ -67,23 +69,24 @@ export class RegisterRequestData {
     acceptedTerms: boolean;
 }
 
-export const enum PatchState {
+export enum PatchState {
     approved = "approved",
     notApproved = "notApproved",
 }
 
-export const enum PatchType {
-    woven = "woven",
-    stitched = "stitched",
-    printed = "printed",
+export enum PatchType {
+    Woven = "Woven",
+    Stitched = "Stitched",
+    Printed = "Printed",
 }
 
-export const enum HttpPatchOperation {
+export enum HttpPatchOperation {
     add = "add",
     remove = "remove",
+    replace = "replace",
 }
 
-export const enum UserStatus {
+export enum UserStatus {
     admin = "admin",
     mod = "mod",
     user = "user",

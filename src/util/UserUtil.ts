@@ -50,4 +50,8 @@ export class UserUtil extends Vue {
         return this.patchIDsOfLoggedInUser && this.patchIDsOfLoggedInUser.includes(patch.id);
     }
 
+    public logout() : void {
+        getModule(AuthModule).logout();
+    }
+
 }

@@ -19,7 +19,7 @@ export default class PatchListView extends Mixins(Constants) {
   private sortingProps : Array<SortingProp> = PatchSortingProps;
   @Ref() private sortingComponent : SortingComponent;
 
-  private loadNextButtonVisible:boolean = true;
+  private loadNextButtonVisible:boolean = false;
 
   mounted() {
     this.loadPatches();
@@ -32,9 +32,7 @@ export default class PatchListView extends Mixins(Constants) {
         var newPatches = response.data;
         this.patches.push(...newPatches);
         this.currentPage++;
-        if (newPatches.length < this.size) {
-          this.loadNextButtonVisible = false;
-        }
+        this.loadNextButtonVisible = newPatches.length == this.size;
       })
       .catch(err => { /*TODO error message?*/ })
       .finally(() => loader.hide());
@@ -55,14 +53,17 @@ export default class PatchListView extends Mixins(Constants) {
 <template>
   <div class="text-center">
     <vue-headful :title="TITLE_PREFIX+this.title"/>
+
     <h1>{{this.title}}</h1>
-    <SortingComponent :sortingProps="sortingProps" @changed="sortingChanged()" ref="sortingComponent" />
+    
+    <SortingComponent v-show="patches.length > 0" :sortingProps="sortingProps" @changed="sortingChanged()" ref="sortingComponent" />
 
     <div class="row" ref="loadingContainer">
       <div class="col-12 col-md-6 col-lg-4 col-xl-3" v-for="patch in patches" v-bind:key="patch.id">
         <PatchComponent class="mx-3 my-3" v-bind:patch="patch"/>
       </div>
     </div>
+
     <div class="text-center">
       <button v-if="loadNextButtonVisible" id="loadNextEntries" @click="loadPatches()" type="submit" class="btn btn-primary">Load next Patches</button>
     </div>

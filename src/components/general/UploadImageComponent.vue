@@ -4,11 +4,17 @@
     @Component
     export default class UploadImageComponent extends Vue {
         @Prop({default: false}) private invalid:boolean;
+        @Prop({default: 400}) private previewMaxHeight:number;
+        @Prop({default: 400}) private previewMaxWidth:number;
 
         private fileReader:FileReader = new FileReader();
 
         private file:File = null;
-        private image:any = ''; //TODO check data type? always string?
+        private image:any = ''; //TODO check data type? always string
+
+        get imagePreviewStyle() : string {
+            return 'max-width: '+this.previewMaxWidth+'px; max-height: '+this.previewMaxHeight+'px';
+        }
 
         created() {
             this.fileReader.onload = ((event : ProgressEvent) => {
@@ -55,14 +61,10 @@
 
         <!-- Image preview -->
         <div class="container text-center mb-3" v-if="image">
-            <img id="imagePreview" :src="image" />
+            <img id="imagePreview" :style="imagePreviewStyle" :src="image" />
         </div>
     </div>
 </template>
 
 <style lang="scss" scoped>
-#imagePreview {
-	width: 100%;
-	max-width: 400px;
-}
 </style>

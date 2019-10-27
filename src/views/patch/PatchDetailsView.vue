@@ -77,8 +77,10 @@ export default class PatchDetailsView extends Mixins(UserUtil, ImageUtil, Consta
             <a @click="showImageBig = true"><img id="patchDetailImage" :src="getThumbnailPathFromURL(patch.image)"/></a>
             <LightboxForOneImage :show="showImageBig" :imageSrc="patch.image" @visibilityChange="showImageBig = $event" />
             <div id="buttonsDiv" v-if="loggedInUser">
-                <b-button v-if="loggedInUserHasPatch(patch)" @click="removeFromCollection()">Remove from Collection</b-button>
-                <b-button v-else @click="addToCollection()">Add to Collection</b-button>
+                <transition name="fade" mode="out-in">
+                    <b-button key="1" v-if="loggedInUserHasPatch(patch)" @click="removeFromCollection()">Remove from Collection</b-button>
+                    <b-button key="2" v-else @click="addToCollection()">Add to Collection</b-button>
+                </transition>
                 <b-button v-if="userIsAdminOrMod()" @click="removeFromDatabase()">Delete</b-button>
                 <b-button v-if="userIsAdminOrMod() && isNotApproved()" @click="approve()">Approve</b-button> 
             </div>

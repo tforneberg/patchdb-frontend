@@ -31,8 +31,6 @@ Vue.use(VeeValidate, {classes: true , events: 'change'});
 Vue.use(VueLazyLoad);
 Vue.use(InstantSearch);
 
-
-
 new Vue({
   router,
   store,

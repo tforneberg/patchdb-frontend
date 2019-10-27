@@ -1,12 +1,14 @@
 <script lang="ts">
 import { Component, Vue, Mixins } from 'vue-property-decorator';
 import {Constants } from '@/util/Constants';
-import { Patch, Band } from '@/model/Model';
+import { Patch, Band, PatchType } from '@/model/Model';
 import UploadImageComponent from '@/components/general/UploadImageComponent.vue';
+import Util from '@/util/Util';
 
-@Component({components: { UploadImageComponent },})
+@Component({components: { UploadImageComponent }, })
 export default class AddPatchView extends Mixins(Constants) {
-	private patch = new Patch();
+    private patch = new Patch();
+    private patchTypeValues:string[] = Util.getStringValuesFromEnum<PatchType>(PatchType);
 
 	private file : File|null = null;
 	private image : any = '';  
@@ -43,8 +45,6 @@ export default class AddPatchView extends Mixins(Constants) {
 
 	onSubmit(event: any) : void {
 		event.preventDefault();
-
-		//TODO show "Uploading ... please wait ..." like message or symbol
 
 		//validate form on client
 		this.$validator.validate().then(formIsValid => {
@@ -98,13 +98,11 @@ export default class AddPatchView extends Mixins(Constants) {
 
 				<label for="typeInput">Type:</label>
 				<select name="typeInput" id="typeInput" class="form-control" placeholder="Enter type" v-model="patch.type">
-					<option value="printed">Printed</option>
-					<option value="stitched">Stitched</option>
-					<option value="woven">Woven</option>
+                    <option v-for="item in patchTypeValues" :key="item" :value="item">{{item}}</option>
 				</select>
 			</div>
 
-			<upload-image-component id="uploadImageComponent" @change="imageFileChanged" :invalid="showServerSideValidationFailedMessage"/><!-- TODO v-validate...-->
+			<upload-image-component id="uploadImageComponent" @change="imageFileChanged" previewMaxHeight="600" previewMaxWidth="600" :invalid="showServerSideValidationFailedMessage"/><!-- TODO v-validate...-->
 
 			<!-- Error alerts --> <!-- TODO make components from these -->
 			<div v-if="showServerSideValidationFailedMessage" id="serverSideValidationFailedMessage" class="alert alert-danger mx-sm-5 text-center" role="alert">
