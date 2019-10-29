@@ -10,35 +10,36 @@
     export default class PatchComponent extends Mixins(UserUtil, ImageUtil) {
         @Prop() private patch?: Patch;
 
-        private imageIsLoading:boolean;
-        private loader:any;
+        private imageLoader:any;
 
         render() : void {
-            this.imageIsLoading = true;
-            this.loader = this.$loading.show({container: this.$refs.loadingContainer});
+            this.imageLoader = this.$loading.show({container: this.$refs.loadingContainer});
         }
 
         private addToCollection() : void {
             if (this.patch) {
+                let buttonLoader = this.$loading.show({container: this.$refs.addButton});
                 getModule(PatchModule).addPatchToCollection(this.patch.id)
                 .then(response => {})
-                .catch(error => {});
+                .catch(error => {})
+                .finally(() => buttonLoader.hide());
             }
         }
 
         private removeFromCollection() : void {
             if (this.patch) {
+                let buttonLoader = this.$loading.show({container: this.$refs.removeButton});
                 getModule(PatchModule).removePatchFromCollection(this.patch.id)
                 .then(response => {
                     this.$emit('removeFromCollection');
                 })
-                .catch(error => {});
+                .catch(error => {})
+                .finally(() => buttonLoader.hide());
             }
         }
 
         private imageLoadingFinished() : void {
-            this.imageIsLoading = false;
-            if (this.loader) this.loader.hide();
+            if (this.imageLoader) this.imageLoader.hide();
         }
     }
 </script>
@@ -54,8 +55,8 @@
         </router-link>
         <div id="buttonsDiv" v-if="loggedInUser">
             <transition name="fade" mode="out-in">
-                <b-button key="1" v-if="loggedInUserHasPatch(this.patch)" @click="removeFromCollection">Remove from Collection</b-button>
-                <b-button ley="2" v-else @click="addToCollection">Add to Collection</b-button>
+                <b-button key="1" ref="removeButton" v-if="loggedInUserHasPatch(this.patch)" @click="removeFromCollection">Remove from Collection</b-button>
+                <b-button key="2" ref="addButton" v-else @click="addToCollection">Add to Collection</b-button>
             </transition>
         </div>
     </div>

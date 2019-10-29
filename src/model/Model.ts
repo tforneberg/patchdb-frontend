@@ -1,6 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
-// Generated using typescript-generator version 2.17.558 on 2019-10-27 02:20:39.
+// Generated using typescript-generator version 2.17.558 on 2019-10-27 10:32:18.
 
 export class Band {
     id: number;
@@ -41,6 +41,7 @@ export class Patch extends Patchable {
     releaseDate: string;
     manufacturer: string;
     users: User[];
+    amountUsers: number;
 }
 
 export class User {

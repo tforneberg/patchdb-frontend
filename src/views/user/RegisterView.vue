@@ -2,8 +2,9 @@
 import { Component, Vue, Mixins } from 'vue-property-decorator';
 import { Constants } from '@/util/Constants';
 import { RegisterRequestData } from '@/model/Model';
+import AlertComponent from '@/components/general/AlertComponent.vue';
 
-@Component({ components: { }, })
+@Component({ components: { AlertComponent }, })
 export default class RegisterView extends Mixins(Constants) {
 	private requestData = new RegisterRequestData();
 	
@@ -83,12 +84,9 @@ export default class RegisterView extends Mixins(Constants) {
 					<small v-show="errors.has('termsCheck')" class="invalidMessage form-text">{{errors.first('termsCheck')}}</small>
 				</div>
 			</div>
-			<div v-if="showServerSideRegistrationFailedMessage" id="serverSideRegistrationFailedMessage" class="alert alert-danger mx-sm-5 text-center" role="alert">
-					Registration was not successfull. 
-			</div>
-			<div v-if="showClientSideValidationFaliedMessage" id="clientSideRFailedMessage" class="alert alert-danger mx-sm-5 text-center" role="alert">
-					Some fields are not correctly filled.<br>Please correct these errors, first.
-			</div>
+            <alert-component class="mx-sm-5" error="true" :show="showServerSideRegistrationFailedMessage">Registration was not successful.</alert-component>
+            <alert-component class="mx-sm-5" error="true" :show="showClientSideValidationFaliedMessage">Some fields are not correctly filled.<br>Please correct these errors, first.</alert-component>
+
 			<div class="text-center">
 				<div><button type="submit" class="btn btn-primary">Submit</button></div>
 			</div>

@@ -31,14 +31,25 @@ export default class CollectionView extends Mixins(Constants) {
   <div>
 	<vue-headful :title="TITLE_PREFIX + (username ? username + '\'s' : '') + ' Collection'"/>
 	<h1 v-if="username != ''">{{username}}'s collection</h1>
-	<div class="row">
-	  <div class="col-12 col-md-6 col-lg-4 col-xl-3" v-for="patch in patches" :key="patch.id">
-		<PatchComponent class="mx-3 my-3" @removeFromCollection="remove(patch)" :patch="patch"/>
+	<transition-group name="list" tag="div" class="row justify-content-center">
+	  <div class="col-12 col-md-6 col-lg-4 col-xl-3 list-item" v-for="patch in patches" :key="patch.id">
+		<PatchComponent class="mx-3 my-3" @removeFromCollection="remove(patch)" :patch="patch" :key="patch.id" />
 	  </div>
-	</div>
+	</transition-group>
   </div>
 </template>
 
 <style lang="scss" scoped>
-
+    .list-item {
+        transition: all 0.5s;
+    }
+    .list-enter-active, .list-leave-active {
+        transition: all 0.5s;
+    }
+    .list-leave-active {
+        position: absolute;
+    }
+    .list-enter, .list-leave-to {
+        opacity: 0;
+    }
 </style>

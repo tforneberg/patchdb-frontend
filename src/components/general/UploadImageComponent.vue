@@ -4,6 +4,7 @@
     @Component
     export default class UploadImageComponent extends Vue {
         @Prop({default: false}) private invalid:boolean;
+        @Prop({default: 'Image:'}) private label:string;
         @Prop({default: 400}) private previewMaxHeight:number;
         @Prop({default: 400}) private previewMaxWidth:number;
 
@@ -49,7 +50,7 @@
 <template>
     <div>
         <div class="form-group" id="fileInputGroup">
-            <label for="image">Image:</label>
+            <label for="image">{{label}}</label>
             <div class="custom-file">
                 <input type="file" class="custom-file-input" :class="{ invalid : invalid }" 
                 id="image" name="image" v-validate="'required|mimes:image/png,image/jpeg'" data-vv-as="image" accept="image/png, image/jpeg" @change="onFileChange">
