@@ -3,7 +3,7 @@ import { Component, Vue, Mixins } from 'vue-property-decorator';
 import { Constants } from '@/util/Constants';
 import { getModule } from 'vuex-module-decorators';
 import AuthModule from '@/store/modules/AuthModule';
-import { LoginRequestData } from '@/model/Model';
+import { LoginRequestData } from '@/model/ui/LoginRequestData';
 
 @Component({ components: {  }, })
 export default class LoginView extends Mixins(Constants) {
@@ -63,6 +63,14 @@ export default class LoginView extends Mixins(Constants) {
             <input type="password" class="form-control" :class="{ 'invalid' : showServerSideLoginFailedMessage }" id="pwInput" placeholder="Enter Password" name="password"
             v-model="requestData.password" v-validate="'required'">
             <small v-show="errors.has('password')" class="invalidMessage form-text">{{errors.first('password')}}</small>
+        </div>
+        <div class="form-group">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="rememberMeCheckBox" name="rememberMeCheckBox" v-model="requestData.remember">
+                <label class="form-check-label" for="termsCheck">
+                    Remember me on this device (do not use on public devices!)
+                </label>
+            </div>
         </div>
         <div v-if="showServerSideLoginFailedMessage" id="serverSideLoginFailedMessage" class="alert alert-danger mx-sm-5 text-center" role="alert">
             Login was not successfull. 

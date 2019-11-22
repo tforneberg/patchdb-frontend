@@ -1,6 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
-// Generated using typescript-generator version 2.17.558 on 2019-10-27 10:32:18.
+// Generated using typescript-generator version 2.17.558 on 2019-11-22 23:15:08.
 
 export class Band {
     id: number;
@@ -55,11 +55,6 @@ export class User {
 export class ChangePasswordRequestData {
     password: string;
     password2: string;
-}
-
-export class LoginRequestData {
-    name: string;
-    password: string;
 }
 
 export class RegisterRequestData {

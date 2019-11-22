@@ -1,5 +1,6 @@
-import { User, LoginRequestData } from '@/model/Model';
-import { getFromLocalStorage, RootState } from '@/store';
+import { User } from '@/model/Model';
+import { LoginRequestData } from '@/model/ui/LoginRequestData';
+import { getFromLocalStorage } from '@/store';
 import axios from 'axios';
 import { Module, VuexModule, Mutation, Action, getModule } from 'vuex-module-decorators';
 import PatchModule from './PatchModule';
@@ -64,10 +65,10 @@ export default class AuthModule extends VuexModule {
         return new Promise((resolve, reject) => {
             this.context.commit('auth_request');
 
-            axios.get('', {
+            axios.get(requestData.remember ? '?remember=true' : '', {
                 auth: {
                     username: requestData.name,
-                    password: requestData.password
+                    password: requestData.password,
                 }
             }).then(response => {
                 axios.get('api/users/findByName/' + requestData.name)
