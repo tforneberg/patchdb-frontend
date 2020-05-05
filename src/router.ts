@@ -12,7 +12,6 @@ import HomeView from './views/HomeView.vue';
 import ImprintView from './views/ImprintView.vue';
 import TermsAndConditionsView from './views/TermsAndConditionsView.vue';
 import PatchListView from './views/patch/PatchListView.vue';
-import SearchPatchesView from './views/patch/SearchPatchesView.vue';
 import UserListView from './views/user/UserListView.vue';
 import NewsListView from './views/news/NewsListView.vue';
 import NewsDetailsView from './views/news/NewsDetailsView.vue';
@@ -33,7 +32,7 @@ const router = new Router({
   routes: [
     //public routes
     { path: '/', name: 'home', component: HomeView, },
-    { path: '/latest', name: 'latest', component: PatchListView, },
+    { path: '/patches', name: 'patches', component: PatchListView, },
     { path: '/login', name: 'login', component: LoginView, 
         meta: { reqLoggedOut: true }, },
     { path: '/register', name: 'register', component: RegisterView, 
@@ -51,7 +50,6 @@ const router = new Router({
     { path: '/terms', name: 'terms', component: TermsAndConditionsView, props: true },
     { path: '/artist/:id', name: 'artist', component: ArtistView, props: true, },
     { path: '/patch/:id', name: 'patch', component: PatchDetailsView, props: true, },
-    { path: '/patches/search', name: 'searchPatches', component: SearchPatchesView, props: true, },
     { path: '/news/:id', name: 'news', component: NewsDetailsView, props: true, },
     //access for all logged in users
     { path: '/users', name: 'users', component: UserListView, meta: { reqAuth: true } },
@@ -59,15 +57,15 @@ const router = new Router({
     { path: '/user/:id', name: 'user', component: ShowUserView, props: true, meta: { reqAuth: true }, },
     { path: '/user/:id/collection', name: 'collection', component: CollectionView, props: true, meta: { reqAuth: true }, },
     { path: '/user/:id/patchesCreated', name: 'patchesCreatedByUser', component: PatchListView, meta: { reqAuth: true }, 
-        props: (route) => ({ title: route.params.title, endpointUrl: 'api/patches/findByUserCreated/'+route.params.id})},
+        props: (route) => ({ title: route.params.title, endpointUrl: '/api/patches/findByUserCreated/'+route.params.id})},
     { path: '/user/edit/profile', name: 'editProfile', component: EditProfileView, meta: { reqAuth: true }, },
     { path: '/settings', name: 'settings', component: SettingsView, meta: { reqAuth: true }, },
     { path: '/add/patch', name: 'addPatch', component: AddPatchView, meta: { reqAuth: true }, },
     //access for admin/mods only
     { path: '/patches/approvalNeeded', name: 'patchesWithApprovalNeeded', component: PatchListView, meta: { reqAdminOrMod: true }, 
-        props: { endpointUrl: 'api/patches/approvalNeeded' }},
+        props: { endpointUrl: '/api/patches/approvalNeeded', title: 'New submissions for approval', showCollectionButtons : false, showSearchBar : false}},
     //NotFoundView
-    { path: '*', component: NotFoundView }
+    { path: '*', name: 'notFound', component: NotFoundView }
   ],
 });
 

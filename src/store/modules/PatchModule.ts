@@ -54,7 +54,8 @@ export default class PatchModule extends VuexModule {
             
             let loggedInUser: User = getModule(AuthModule).loggedInUser;
             if (loggedInUser != null) {
-                axios.patch('api/users/' + loggedInUser.id + '/patches', request)
+                axios.patch
+                axios.patch('/api/users/' + loggedInUser.id + '/patches', request)
                     .then(res => {
                         this.context.commit('add_patch', patchID);
                         resolve(res);
@@ -64,7 +65,7 @@ export default class PatchModule extends VuexModule {
         });
     }
 
-    @Action
+    @Action({ rawError: true })
     removePatchFromCollection(patchID: number): Promise<any> {
         return new Promise((resolve, reject) => {
             let request = new Patch();
@@ -73,7 +74,7 @@ export default class PatchModule extends VuexModule {
 
             let loggedInUser: User = getModule(AuthModule).loggedInUser;
             if (loggedInUser != null) {
-                axios.patch('api/users/' + loggedInUser.id + '/patches', request)
+                axios.patch('/api/users/' + loggedInUser.id + '/patches', request)
                     .then(res => {
                         this.context.commit('remove_patch', patchID);
                         resolve(res);

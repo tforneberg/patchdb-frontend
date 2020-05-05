@@ -21,7 +21,7 @@ export default class NewsListView extends Mixins(Constants) {
 	}
 
 	private loadNews() : void {
-		this.axios.get('api/news?page='+this.currentPage+'&size='+this.size)
+		this.axios.get('/api/news?page='+this.currentPage+'&size='+this.size)
 		.then(response => {
 			var newNews = response.data;
 			this.newsList.push(...newNews);

@@ -9,6 +9,7 @@
     @Component
     export default class PatchComponent extends Mixins(UserUtil, ImageUtil) {
         @Prop() private patch?: Patch;
+        @Prop({default: true}) private showCollectionButtons : boolean;
 
         private imageLoader:any;
 
@@ -53,10 +54,10 @@
         <router-link :to="'/patch/'+patch.id">
             <img :src="getThumbnailPathFromURL(patch.image)" @load="imageLoadingFinished"/>
         </router-link>
-        <div id="buttonsDiv" v-if="loggedInUser">
+        <div id="buttonsDiv" v-if="loggedInUser && showCollectionButtons">
             <transition name="fade" mode="out-in">
-                <b-button key="1" ref="removeButton" v-if="loggedInUserHasPatch(this.patch)" @click="removeFromCollection">Remove from Collection</b-button>
-                <b-button key="2" ref="addButton" v-else @click="addToCollection">Add to Collection</b-button>
+                <b-button type="button" key="1" ref="removeButton" v-if="loggedInUserHasPatch(this.patch)" @click="removeFromCollection">Remove from Collection</b-button>
+                <b-button type="button" key="2" ref="addButton" v-else @click="addToCollection">Add to Collection</b-button>
             </transition>
         </div>
     </div>
@@ -65,7 +66,7 @@
 
 <style scoped lang="scss">
 #patchCard {
-  background-image: url('../assets/denim500.jpg');
+//   background-image: url('../assets/denim500.jpg');
 }
 img {
   width: 100%;

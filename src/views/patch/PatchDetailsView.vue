@@ -19,7 +19,7 @@ export default class PatchDetailsView extends Mixins(UserUtil, ImageUtil, Consta
 
     created() : void {
         let loader = this.$loading.show();
-        this.axios.get('api/patches/'+this.id)
+        this.axios.get('/api/patches/'+this.id)
             .then(response => {
                 this.patch = response.data as Patch;
             })
@@ -54,7 +54,7 @@ export default class PatchDetailsView extends Mixins(UserUtil, ImageUtil, Consta
         let buttonLoader = this.$loading.show({container: this.$refs.approveButton});
         let requestObj:Patch = new Patch();
         requestObj.state = PatchState.approved;
-        this.axios.patch('api/patches/'+this.id, requestObj)
+        this.axios.patch('/api/patches/'+this.id, requestObj)
             .then(response => {
                 this.patch = response.data as Patch;
             })
@@ -65,7 +65,7 @@ export default class PatchDetailsView extends Mixins(UserUtil, ImageUtil, Consta
 
     private removeFromDatabase() : void {
         let buttonLoader = this.$loading.show({container: this.$refs.deleteFromDBButton})
-        this.axios.delete('api/patches/'+this.id)
+        this.axios.delete('/api/patches/'+this.id)
             .then(response => {
                 this.$router.go(-1);
             })
@@ -88,11 +88,11 @@ export default class PatchDetailsView extends Mixins(UserUtil, ImageUtil, Consta
             <LightboxForOneImage :show="showImageBig" :imageSrc="patch.image" @visibilityChange="showImageBig = $event" />
             <div id="buttonsDiv" v-if="loggedInUser">
                 <transition name="fade" mode="out-in">
-                    <b-button ref="removeFromCollectionButton" class="vld-parent" key="1" v-if="loggedInUserHasPatch(patch)" @click="removeFromCollection()">Remove from Collection</b-button>
-                    <b-button ref="addToCollectionButton" class="vld-parent" key="2" v-else @click="addToCollection()">Add to Collection</b-button>
+                    <b-button type="button" ref="removeFromCollectionButton" class="vld-parent" key="1" v-if="loggedInUserHasPatch(patch)" @click.prevent="removeFromCollection()">Remove from Collection</b-button>
+                    <b-button type="button" ref="addToCollectionButton" class="vld-parent" key="2" v-else @click.prevent="addToCollection()">Add to Collection</b-button>
                 </transition>
-                <b-button ref="deleteFromDBButton" class="vld-parent" v-if="userIsAdminOrMod()" @click="removeFromDatabase()">Delete</b-button>
-                <b-button ref="approveButton" class="vld-parent" v-if="userIsAdminOrMod() && isNotApproved()" @click="approve()">Approve</b-button> 
+                <b-button type="button" ref="deleteFromDBButton" class="vld-parent" v-if="userIsAdminOrMod()" @click.prevent="removeFromDatabase()">Delete</b-button>
+                <b-button type="button" ref="approveButton" class="vld-parent" v-if="userIsAdminOrMod() && isNotApproved()" @click.prevent="approve()">Approve</b-button> 
             </div>
         </div>
     </div>
@@ -100,8 +100,12 @@ export default class PatchDetailsView extends Mixins(UserUtil, ImageUtil, Consta
 </template>
 
 <style lang="scss" scoped>
+  img .patchDetailImage {
+    padding: 10px;
+  }
+
 #patchCard {
-  background-image: url('../../assets/denim500.jpg');
+//   background-image: url('../../assets/denim500.jpg');
 }
 #patchDetailImage {
     cursor: pointer;

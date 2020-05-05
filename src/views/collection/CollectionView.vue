@@ -4,6 +4,8 @@ import { Constants } from '@/util/Constants';
 import { Patch, Collection } from '@/model/Model'
 import PatchComponent from '@/components/PatchComponent.vue';
 
+//TODO remove component, use PatchListView and customize with props instead? 
+
 @Component({ components: { PatchComponent }, })
 export default class CollectionView extends Mixins(Constants) { 
   @Prop() private id?: string;
@@ -12,7 +14,7 @@ export default class CollectionView extends Mixins(Constants) {
   username: string = '';
 
   created() {
-	this.axios.get('api/users/'+this.id+'/patches').then(response => {
+	this.axios.get('/api/users/'+this.id+'/patches').then(response => {
 	  let collection:Collection = response.data as Collection;
 	  this.patches = collection.patches;
 	  this.username = collection.username;

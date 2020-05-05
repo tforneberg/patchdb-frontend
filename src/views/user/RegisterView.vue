@@ -26,7 +26,7 @@ export default class RegisterView extends Mixins(Constants) {
 		//validate form on client
 		this.$validator.validate().then(formIsValid => {
 			if (formIsValid) {
-				this.axios.post('api/users/register', this.requestData)
+				this.axios.post('/api/users/register', this.requestData)
 				.then(response => {
 					console.log(response);
 

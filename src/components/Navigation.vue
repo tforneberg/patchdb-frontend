@@ -44,9 +44,7 @@
                     <template slot="button-content">
                         Patches
                     </template>
-                    <b-dropdown-item to="/latest">Latest</b-dropdown-item>
-                    <b-dropdown-item to="/hottest">Hottest</b-dropdown-item>
-                    <b-dropdown-item to="/patches/search">Search</b-dropdown-item>
+                    <b-dropdown-item to="/patches">Show</b-dropdown-item>
                     <b-dropdown-item to="/add/patch" v-if="isLoggedIn">Add Patch</b-dropdown-item>
                 </b-nav-item-dropdown>
                 <b-nav-item-dropdown id="languageDropdown" right>
@@ -154,6 +152,11 @@
     background-color: $gray-800;
     border-bottom: 2px solid $primary;  
     box-shadow: 0px 2px 7px $gray-600;
+    min-height: $header-height-on-small-displays;
+    @media screen and (min-width: $break-lg){
+      min-height: $header-height-on-big-displays;
+      height: $header-height-on-big-displays;
+    }
 }
 
 #searchbar {

@@ -35,9 +35,9 @@
     position:absolute;
     bottom:0;
     width: 100%;
-    height: $footer-height-big;
+    height: $footer-height-on-small-displays;
     @media screen and (min-width: $break-lg){
-      height: $footer-height-small; //footer height on large and bigger screens
+      height: $footer-height-on-big-displays;
     }
 }
  

@@ -11,44 +11,9 @@ body {
     @include body-font;
   }
 
-  #app {
-    min-height:100%;
-    position:relative;
-  }
-
-  #mainContainer {
-    padding-top: 60px + 20px !important; //header height plus some extra padding
-    margin-left: auto;
-    margin-right: auto;
-    max-width: 1280px;
-    padding-left: 20px;
-    padding-right: 20px;
-    padding-bottom: $footer-height-big + 20px; //footer height smaller than large screens
-    @media screen and (min-width: $break-lg){
-      padding-bottom: $footer-height-small + 20px; //footer height on large and bigger screens
-    }
-  }
-
   .card {
     border-radius: 0%;
     box-shadow: 0px 3px 6px $gray-600;
-  }
-
-  .alert {
-    border-radius: 0%;
-    color: black;
-  }
-
-  .alert-warning {
-    background-color: desaturate(lighten($errorColor, 20%), $amount: 25%);
-  }
-
-  .alert-success {
-    background-color: desaturate(lighten($primary, 20%), $amount: 25%);
-  }
-
-  .alert-info {
-    background-color: desaturate($gray-500, $amount: 25%);
   }
 
   .card-body {
@@ -63,14 +28,11 @@ body {
     color: $primary;
     &:hover {
       color: darken($primary, 10%);
+      text-decoration: none;
     }
   }
   
-  .text-primary {
-    color: $primary !important;
-  }
-  
-  .primary-color {
+  .text-primary, .primary-color {
     color: $primary !important;
   }
   
@@ -78,12 +40,7 @@ body {
     background-color: $primary !important;
   }
   
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
+  h1, h2, h3, h4, h5, h6 {
     font-weight: 700;
     @include heading-font;
   }
@@ -110,83 +67,38 @@ body {
     }
   }
   
-  // Button Styles
-  .btn {
-    @include heading-font;
-    font-weight: 700;
-    border-radius: 0%;
-    margin-right: 5px;
-  }
-  
-  .btn-xl {
-    font-size: 18px;
-    padding: 20px 40px;
-  }
-  
-  .btn-primary {
-    background-color: $primary;
-    border-color: darken($primary, 7.5%);
-    box-shadow: 0.05rem 0.1rem 0.08rem $gray-800 !important;
-    &:active,
-    &:focus,
-    &:hover {
-      background-color: darken($primary, 7.5%) !important;
-      border-color: darken($primary, 7.5%) !important;
-      color: white;
-    }
-    &:active,
-    &:focus {
-      box-shadow: 0 0 0.12rem 0.05rem $gray-900 !important;
-    }
-  }
-  
   // Highlight color customization
-  ::-moz-selection {
+  ::selection, ::-moz-selection {
     background: $primary;
     text-shadow: none;
-  }
-  
-  ::selection {
-    background: $primary;
-    text-shadow: none;
-  }
-  
-  img::selection {
-    background: transparent;
-  }
-  
-  img::-moz-selection {
-    background: transparent;
   }
 
-  img .patchDetailImage {
-    padding: 10px;
-  }
+    img {
+        -webkit-filter: brightness(100%);
+        filter: brightness(100%);
+        &:not(.vue-lb-modal-image):hover {
+            -webkit-filter: brightness(80%);
+            filter: brightness(80%);
+            -webkit-transition: all 0.5s ease;
+            -moz-transition: all 0.5s ease;
+            -o-transition: all 0.5s ease;
+            -ms-transition: all 0.5s ease;
+            transition: all 0.5s ease;
+        }
+        &::selection, ::-moz-selection {
+            background: transparent;
+        }
+    }
   
-  .list-group-item {
-    background: transparent;
-  }
+  .list-group-item { background: transparent; }
   
   .fa-check-square {
     margin-right: 5px;
   }
   
-  .margin-bottom {
-    margin-bottom: 60px;
-  }
-  
-  .bg-light {
-    background-color: $gray-300;
-  }
-  
-  .bg-medium {
-    background-color: $gray-400;
-  }
-  
-  .bg-dark {
-    background-color: $gray-500;
-  }
-  
+  .bg-light { background-color: $gray-300; }
+  .bg-medium {background-color: $gray-400; }
+  .bg-dark { background-color: $gray-500; }
   .bg-very-dark {
     background-color: $gray-900;
     color: white;
@@ -202,60 +114,4 @@ body {
   .container {
     max-width: 1280px;
     padding: 0 20px;
-  }
-
-  .form-control:focus { //changes the glowing color around text input fields
-    border-color: $primary;
-    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 4px $primary;
-  }
-
-
-  //remove round borders from bootstrap theme 
-  input, textarea, .custom-file-label, .custom-file-label::after {
-    border-radius: 0%;
-  }
-
-  textarea:focus,
-  input[type="text"]:focus,
-  input[type="password"]:focus,
-  input[type="datetime"]:focus,
-  input[type="datetime-local"]:focus,
-  input[type="date"]:focus,
-  input[type="month"]:focus,
-  input[type="time"]:focus,
-  input[type="week"]:focus,
-  input[type="number"]:focus,
-  input[type="email"]:focus,
-  input[type="url"]:focus,
-  input[type="search"]:focus,
-  input[type="tel"]:focus,
-  input[type="color"]:focus,
-  .uneditable-input:focus {   
-    border-color: $primary;
-    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px darken($primary, 10%);
-    outline: 0 none;
-  }
-
-  .custom-control-input:checked ~ .custom-control-label::before {
-    //changes checkbox color from bootstrap-vue form checkboxes
-    //meaning: all following siblings of .custom-control-input:checked who are .custom-control-label::before
-    border-color: $primary;
-    background-color: $primary;
-  }
-
-  .invalid {
-    border: solid 1px $errorColor;
-  }
-
-  .valid {
-    border: solid 1px $validColor;
-  }
-
-  .invalidMessage {
-    color: $errorColor;
-    margin: auto;
-  }
-
-  .dropdown-item {
-    color: $gray-200 !important;
   }

@@ -20,7 +20,8 @@ export interface RootState {
 const storeOptions : StoreOptions<RootState> = {
   state: {
     version: '1.0.0',
-    backend: 'http://localhost:5000/'
+    //backend: 'http://localhost:8080/' //TODO set this via .env.production for production releases to be the real deal server url
+    backend: window.location.origin
   }
 };
 

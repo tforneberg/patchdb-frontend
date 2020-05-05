@@ -18,7 +18,7 @@ export default class UserListView extends Mixins(Constants) {
 
 	private loadUsers() : void {
 		let loader = this.$loading.show({container: this.$refs.loadingContainer});
-		this.axios.get('api/users?page='+this.currentPage+'&size='+this.size)
+		this.axios.get('/api/users?page='+this.currentPage+'&size='+this.size)
 		.then(response => {
 			var newUsers = response.data;
 			this.users.push(...newUsers);

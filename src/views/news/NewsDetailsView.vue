@@ -20,7 +20,7 @@ export default class NewsDetailsView extends Mixins(Constants) {
 	}
 
 	private loadNews() : void {
-		this.axios.get('api/news/'+this.id)
+		this.axios.get('/api/news/'+this.id)
 		.then(response => {
 			this.news = response.data as News;
 		})

@@ -14,17 +14,12 @@
             }
         }
 
-        @Emit("changed") 
-        private onChanged(newSelection:SortingProp) : void {
-            this.selectedItem = newSelection;
+        get selectedItemLabelWithDirection() : string {
+            return this.selectedItem.propLabel + (this.selectedItem.direction == Direction.desc ? " (descending)" : " (ascending)");
         }
 
-        private getOptionLabel(option:SortingProp) : string {
-            return option.propLabel + (option.direction == Direction.desc ? " (absteigend)" : " (aufsteigend)");
-        }
-
-        get labelWithDirection() : string {
-            return this.selectedItem.propLabel + (this.selectedItem.direction == Direction.desc ? " (absteigend)" : " (aufsteigend)");
+        get cssClassForButtonArrow() : string {
+            return this.selectedItem.direction == Direction.asc ? "dropdown-toggle-upwards" : "";
         }
 
         public getSortUrlString() : string {
@@ -38,13 +33,22 @@
         public setSelectedItem(newSelection:SortingProp) : void {
             this.selectedItem = newSelection;
         }
+
+        @Emit("changed") 
+        private onChanged(newSelection:SortingProp) : void {
+            this.selectedItem = newSelection;
+        }
+
+        private getOptionLabel(option:SortingProp) : string {
+            return option.propLabel + (option.direction == Direction.desc ? " (descending)" : " (ascending)");
+        }
     }
 </script>
 
 <template>
-    <b-dropdown>
+    <b-dropdown :class="cssClassForButtonArrow">
         <template slot="button-content">
-           Sortiert nach: {{labelWithDirection}}
+           Sort by: {{selectedItemLabelWithDirection}}
         </template>
         <b-dropdown-item v-for="sortingProp in sortingProps" :key="sortingProp.key" @click="onChanged(sortingProp)">
             {{getOptionLabel(sortingProp)}}

@@ -8,11 +8,15 @@ import { LoginRequestData } from '@/model/ui/LoginRequestData';
 @Component({ components: {  }, })
 export default class LoginView extends Mixins(Constants) {
         
-    private requestData = new LoginRequestData();
+    private requestData:LoginRequestData = new LoginRequestData();
 
     private loader:any;
     private showClientSideValidationFaliedMessage:boolean = false;
     private showServerSideLoginFailedMessage:boolean = false;
+
+    created() : void {
+        this.requestData.remember = true;
+    }
 
     resetFailMessages() : void {
         this.showServerSideLoginFailedMessage = false;

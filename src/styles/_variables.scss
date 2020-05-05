@@ -11,21 +11,20 @@ $gray-900: #212529 !default;
 $gray-990: #181a1d !default;
 $black: #000 !default;
 
-// $primary: #2ba079 !default; //old 2ec65e
-// $primaryRGBA: rgba(43, 160, 121, 1);
+$primary: #c44f3f !default;
 
-$primary: #2f72b5 !default;
-
-$background: #dddddd !default;
+$background: #868e96 !default;
+$background-card: #f8f9fa !default;
 
 $errorColor: darken(red, 10%);
 $validColor: green;
 $warningColor: rgb(255, 255, 134);
 
-$break-md: 768px;
+$break-md: 768px; //unused so far
 $break-lg: 992px;
 
-$header-height-big: 60px;
+$header-height-on-big-displays: 52px; 
+$header-height-on-small-displays: 60px; 
 
-$footer-height-small: 43px;
-$footer-height-big: 73px;
+$footer-height-on-big-displays: 43px;
+$footer-height-on-small-displays: 73px;

@@ -13,7 +13,7 @@ export default class ShowUserView extends Mixins(UserUtil, Constants) {
     private user: User = null;
 
     created() : void {
-        this.axios.get('api/users/'+this.id)
+        this.axios.get('/api/users/'+this.id)
             .then(response => {
                 this.user = response.data;
             })
@@ -55,7 +55,7 @@ export default class ShowUserView extends Mixins(UserUtil, Constants) {
     private changeRoleTo(userStatus:UserStatus) {
         let request = new User();
         request.status = userStatus;
-        this.axios.patch('api/users/'+this.id, request)
+        this.axios.patch('/api/users/'+this.id, request)
             .then(response => {
                 this.user = response.data;
             })
@@ -79,16 +79,16 @@ export default class ShowUserView extends Mixins(UserUtil, Constants) {
             <b-button v-if="isLoggedInUser(user)" @click="editProfileButtonClicked()">Edit</b-button>
             <span v-if="userIsAdmin && !isOwnUsersPage" id="setUnsetModeratorButtons">
                 <transition name="fade" mode="out-in">
-                    <b-button key="1" v-if="showUnmakeModButton" @click="makeUser()">Set status to "User"</b-button>
-                    <b-button key="2" v-else @click="makeMod()">Set status to "Moderator"</b-button>
+                    <b-button type="button" key="1" v-if="showUnmakeModButton" @click="makeUser()">Set status to "User"</b-button>
+                    <b-button type="button" key="2" v-else @click="makeMod()">Set status to "Moderator"</b-button>
                 </transition>
             </span>
             
             <transition name="fade"></transition>
             <span v-if="userIsAdminOrMod && !isOwnUsersPage" id="blockUnblockButtons">
                 <transition name="fade" mode="out-in">
-                    <b-button key="1" v-if="showUnblockButton" @click="unblock()">Unblock this user</b-button>
-                    <b-button key="2" v-else @click="setBlocked()">Block this user</b-button>
+                    <b-button type="button" key="1" v-if="showUnblockButton" @click="unblock()">Unblock this user</b-button>
+                    <b-button type="button" key="2" v-else @click="setBlocked()">Block this user</b-button>
                 </transition>
             </span>
         </p>
