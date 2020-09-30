@@ -1,6 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
-// Generated using typescript-generator version 2.17.558 on 2019-11-22 23:15:08.
+// Generated using typescript-generator version 2.17.558 on 2020-09-30 18:05:19.
 
 export class Band {
     id: number;

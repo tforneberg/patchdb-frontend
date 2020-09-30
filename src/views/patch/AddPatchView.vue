@@ -28,7 +28,7 @@ export default class AddPatchView extends Mixins(Constants) {
 	}
 
 	loadBands() : void {
-		this.axios.get('api/bands')
+		this.axios.get('/api/bands')
 			.then(response => {
 				this.bands.push(...response.data);
 			})

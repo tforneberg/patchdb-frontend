@@ -23,7 +23,9 @@
         logout() : void {
             getModule(AuthModule).logout()
             .then(() => {
-                this.$router.push('/');
+                if (this.$router.currentRoute.path !== '/') {
+                    this.$router.push('/');
+                }
             });
         }
     }
