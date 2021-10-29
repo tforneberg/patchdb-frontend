@@ -71,7 +71,7 @@ export default class AuthModule extends VuexModule {
                     password: requestData.password,
                 }
             }).then(response => {
-                axios.get('/api/users/findByName/' + requestData.name)
+                axios.get('/api/users/name/' + requestData.name)
                     .then(response2 => {
                         let user = new User();
                         user.id = response2.data.id;

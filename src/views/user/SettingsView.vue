@@ -51,7 +51,7 @@ export default class SettingsView extends Mixins(UserUtil, Constants) {
         this.$validator.validate().then(formIsValid => {
             if (formIsValid && this.loggedInUser) {
                 let loader = this.$loading.show({container: this.$refs.savePasswordButton});
-                this.axios.patch('/api/users/'+this.loggedInUser.id+'/changePassword', this.requestData)
+                this.axios.patch('/api/users/'+this.loggedInUser.id+'/password', this.requestData)
                     .then(response => {
                         this.showSavePasswordSuccessMessage = true;
                     })
@@ -72,7 +72,7 @@ export default class SettingsView extends Mixins(UserUtil, Constants) {
             var requestObject:FormData = new FormData();
             requestObject.append('file', this.imageFile);
 
-            this.axios.post('/api/users/'+this.loggedInUser.id+'/uploadImage', requestObject, 
+            this.axios.post('/api/users/'+this.loggedInUser.id+'/image', requestObject,
                     { headers: {'Content-Type': 'multipart/form-data'} }
                 ).then(response => {
                     this.showImageUploadSuccessMessage = true;

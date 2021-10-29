@@ -20,12 +20,18 @@ export default class AddPatchView extends Mixins(Constants) {
 	private image : any = ''; 
 
     private bands : Array<Band> = new Array();
-    private patch:Patch = new Patch();
-    private patchTypes:Object[] = Util.getModelSelectList(Util.getStringValuesFromEnum(PatchType));
+    private patch : Patch = this.getNewPatch();
+    private patchTypes : Object[] = Util.getModelSelectList(Util.getStringValuesFromEnum(PatchType));
 
 	created() {
 		this.loadBands();
 	}
+
+	getNewPatch() : Patch {
+	    let patch:Patch = new Patch();
+	    patch.band = new Band();
+	    return patch;
+    }
 
 	loadBands() : void {
 		this.axios.get('/api/bands')
@@ -64,7 +70,7 @@ export default class AddPatchView extends Mixins(Constants) {
 				this.axios.post('/api/patches', formData).then(response => {
 					this.showSuccessMessage = true;
 					this.isUploading = false;
-					this.patch = new Patch();
+					this.patch = this.getNewPatch();
 					this.image = '';
 					this.file = null;
 				}).catch(err => {
@@ -93,7 +99,7 @@ export default class AddPatchView extends Mixins(Constants) {
                 <small v-show="errors.has('name')" class="invalidMessage form-text">{{errors.first('name')}}</small>
 
 				<label for="bandInput">Band:</label>
-                <model-list-select name="bandSelectionList" :list="bands" option-text="name" option-value="id" v-model="patch.band" placeholder="Enter band"/>
+                <model-list-select name="bandSelectionList" :list="bands" option-text="name" option-value="id" v-model="patch.band.id" placeholder="Enter band"/>
 
 				<label for="typeInput">Type:</label>
                 <model-select id="typeInput" name="type" :options="patchTypes" v-model="patch.type" placeholder="Enter type" 

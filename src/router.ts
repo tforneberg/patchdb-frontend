@@ -57,7 +57,7 @@ const router = new Router({
     { path: '/user/:id', name: 'user', component: ShowUserView, props: true, meta: { reqAuth: true }, },
     { path: '/user/:id/collection', name: 'collection', component: CollectionView, props: true, meta: { reqAuth: true }, },
     { path: '/user/:id/patchesCreated', name: 'patchesCreatedByUser', component: PatchListView, meta: { reqAuth: true }, 
-        props: (route) => ({ title: route.params.title, endpointUrl: '/api/patches/findByUserCreated/'+route.params.id})},
+        props: (route) => ({ title: route.params.title, endpointUrl: '/api/patches/userCreated/'+route.params.id})},
     { path: '/user/edit/profile', name: 'editProfile', component: EditProfileView, meta: { reqAuth: true }, },
     { path: '/settings', name: 'settings', component: SettingsView, meta: { reqAuth: true }, },
     { path: '/add/patch', name: 'addPatch', component: AddPatchView, meta: { reqAuth: true }, },

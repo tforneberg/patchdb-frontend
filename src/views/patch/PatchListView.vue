@@ -62,7 +62,7 @@ export default class PatchListView extends Mixins(Constants) {
 	}
 	
 	private getSerachString(searchString:string) : string {
-		return searchString == undefined || searchString == null || searchString.length == 0 ? '' : '/findByName/' + searchString;
+		return searchString == undefined || searchString == null || searchString.length == 0 ? '' : '/name/' + searchString;
 	}
 
 }

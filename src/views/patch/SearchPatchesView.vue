@@ -9,7 +9,7 @@ import SortingComponent from '@/components/general/SortingComponent.vue';
 
 @Component({ components: { PatchComponent, SortingComponent }, })
 export default class SearchPatchesView extends Mixins(Constants) {
-    @Prop({default: '/api/patches/findByName/'}) endpointUrl:string;
+    @Prop({default: '/api/patches/name/'}) endpointUrl:string;
     @Prop({default: 'Search Patches'}) title:string;
 
     @Ref() private sortingComponent : SortingComponent;
