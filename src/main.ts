@@ -9,10 +9,10 @@ import VeeValidate from "vee-validate";
 import VueLazyLoad from 'vue-lazyload';
 import vueHeadful from 'vue-headful';
 import InstantSearch from 'vue-instantsearch';
-import Loading from 'vue-loading-overlay';
+import Loading, { PluginApi } from 'vue-loading-overlay';
 
 declare module 'vue/types/vue' {  export interface Vue {
-    $loading: any;
+    readonly $loading: PluginApi;
   } }
 
 axios.defaults.withCredentials = true; //needed for CORS
@@ -21,7 +21,7 @@ axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'; //needed f
 Vue.config.productionTip = false;
 
 Vue.component('vue-headful', vueHeadful);
-Vue.component('loading', Loading);
+Vue.component('loading', Loading); 
 
 Vue.use(Loading);
 Vue.use(BootstrapVue);
