@@ -63,7 +63,7 @@ const router = new Router({
     { path: '/add/patch', name: 'addPatch', component: AddPatchView, meta: { reqAuth: true }, },
     //access for admin/mods only
     { path: '/patches/approvalNeeded', name: 'patchesWithApprovalNeeded', component: PatchListView, meta: { reqAdminOrMod: true }, 
-        props: { endpointUrl: '/api/patches/approvalNeeded', title: 'New submissions for approval', showCollectionButtons : false, showSearchBar : false}},
+        props: { endpointUrl: '/api/patches/state/notApproved', title: 'New submissions for approval', showCollectionButtons : false, showSearchBar : false}},
     //NotFoundView
     { path: '*', name: 'notFound', component: NotFoundView }
   ],
