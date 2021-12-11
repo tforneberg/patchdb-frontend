@@ -65,7 +65,7 @@ export default class AuthModule extends VuexModule {
         return new Promise((resolve, reject) => {
             this.context.commit('auth_request');
 
-            axios.get('/api/users/login'+ (requestData.remember ? '?remember=true' : ''), {
+            axios.get('/api/users/login?recaptchaToken='+ requestData.recaptchaToken + (requestData.remember ? '&remember=true' : ''), {
                 auth: {
                     username: requestData.name,
                     password: requestData.password,

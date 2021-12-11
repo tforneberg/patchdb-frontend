@@ -15,6 +15,12 @@ declare module 'vue/types/vue' {  export interface Vue {
     readonly $loading: PluginApi;
   } }
 
+declare global {
+  interface Window {
+    grecaptcha: any
+  }
+}
+
 axios.defaults.withCredentials = true; //needed for CORS
 axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'; //needed for HTTP basic auth
 

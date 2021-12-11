@@ -26,17 +26,22 @@ export default class RegisterView extends Mixins(Constants) {
 		//validate form on client
 		this.$validator.validate().then(formIsValid => {
 			if (formIsValid) {
-				this.axios.post('/api/users/register', this.requestData)
-				.then(response => {
-					console.log(response);
 
-					this.$router.push('/registrationSuccessful');
-				})
-				.catch(err => {
-					console.log(err);
+				window.grecaptcha.enterprise.ready(async () => {
+					//request recaptcha token
+					this.requestData.recaptchaToken = await window.grecaptcha.enterprise.execute(this.RECAPTCHA_SITE_KEY, {action: 'REGISTER'});
+					
+					this.axios.post('/api/users/register', this.requestData).then(response => {
+						console.log(response);
 
-					this.showServerSideRegistrationFailedMessage = true;
-				})
+						this.$router.push('/registrationSuccessful');
+					})
+					.catch(err => {
+						console.log(err);
+
+						this.showServerSideRegistrationFailedMessage = true;
+					})
+				});
 			} else {
 				this.showClientSideValidationFaliedMessage = true;
 			}

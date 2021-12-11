@@ -5,6 +5,7 @@ import { getModule } from 'vuex-module-decorators';
 import AuthModule from '@/store/modules/AuthModule';
 import { LoginRequestData } from '@/model/ui/LoginRequestData';
 
+
 @Component({ components: {  }, })
 export default class LoginView extends Mixins(Constants) {
         
@@ -30,14 +31,20 @@ export default class LoginView extends Mixins(Constants) {
         this.$validator.validate().then(formIsValid => {
             if (formIsValid) {
                 this.loader = this.$loading.show();
-                getModule(AuthModule).login(this.requestData)
-                .then(() => { 
-                    if (this.loader) this.loader.hide();
-                    this.$router.push('/');
-                })
-                .catch((err) => {
-                    if (this.loader) this.loader.hide();
-                    this.showServerSideLoginFailedMessage = true;
+
+                window.grecaptcha.enterprise.ready(async () => {
+                    //request recaptcha token
+                    this.requestData.recaptchaToken = await window.grecaptcha.enterprise.execute(this.RECAPTCHA_SITE_KEY, {action: 'LOGIN'});
+
+                    //send request to backend
+                    getModule(AuthModule).login(this.requestData).then(() => { 
+                        if (this.loader) this.loader.hide();
+                        this.$router.push('/');
+                    })
+                    .catch((err) => {
+                        if (this.loader) this.loader.hide();
+                        this.showServerSideLoginFailedMessage = true;
+                    });
                 });
             } else {
                 this.showClientSideValidationFaliedMessage = true;

@@ -1,6 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
-// Generated using typescript-generator version 2.17.558 on 2020-09-30 18:05:19.
+// Generated using typescript-generator version 2.17.558 on 2021-12-11 23:30:51.
 
 export class Band {
     id: number;
@@ -21,13 +21,13 @@ export class News {
     creator: User;
 }
 
-export class Patchable {
+export class UpdatableObject {
     operation: HttpPatchOperation;
     path: string;
     value: string;
 }
 
-export class Patch extends Patchable {
+export class Patch extends UpdatableObject {
     id: number;
     name: string;
     dateInserted: string;
@@ -52,6 +52,16 @@ export class User {
     patchIDs: number[];
 }
 
+export class UserVerificationToken {
+    id: number;
+    token: string;
+    user: User;
+    expiryDate: Date;
+}
+
+export class Companion {
+}
+
 export class ChangePasswordRequestData {
     password: string;
     password2: string;
@@ -63,6 +73,7 @@ export class RegisterRequestData {
     password: string;
     password2: string;
     acceptedTerms: boolean;
+    recaptchaToken: string;
 }
 
 export enum PatchState {
@@ -87,4 +98,5 @@ export enum UserStatus {
     mod = "mod",
     user = "user",
     blockedUser = "blockedUser",
+    unconfirmed = "unconfirmed",
 }
