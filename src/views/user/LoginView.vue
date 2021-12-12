@@ -53,7 +53,7 @@ export default class LoginView extends Mixins(Constants) {
     }
 
     onForgotPassword() : void {
-        this.$router.push('/forgotPassword');
+        this.$router.push('/resetPassword');
     }
 }
 </script>

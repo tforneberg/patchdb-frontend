@@ -101,11 +101,11 @@ export default class AuthModule extends VuexModule {
     @Action
     logout() : Promise<any> {
         return new Promise((resolve, reject) => {
-            this.context.commit('logout_'); 
-            //tell the server to logout and invalidate the cookies (must be POST)
-            axios({ url: '/api/logout', method: 'POST' });
+                this.context.commit('logout_'); 
+                //tell the server to logout and invalidate the cookies (must be POST)
+                axios({ url: '/api/logout', method: 'POST' });
 
-            resolve();
+                resolve(null);
             }
         );
     }

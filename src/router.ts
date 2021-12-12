@@ -21,6 +21,7 @@ import OverviewView from './views/OverviewView.vue';
 import PatchDetailsView from './views/patch/PatchDetailsView.vue';
 import RegisterView from './views/user/RegisterView.vue';
 import RegistrationSuccessful from './views/user/RegistrationSuccessfulView.vue';
+import ResetPasswordView from './views/user/ResetPasswordView.vue';
 import SettingsView from './views/user/SettingsView.vue';
 import ShowUserView from './views/user/ShowUserView.vue';
 import { UserStatus } from './model/Model';
@@ -34,6 +35,8 @@ const router = new Router({
     { path: '/', name: 'home', component: HomeView, },
     { path: '/patches', name: 'patches', component: PatchListView, },
     { path: '/login', name: 'login', component: LoginView, 
+        meta: { reqLoggedOut: true }, },
+    { path: '/resetPassword', name: 'resetPassword', component: ResetPasswordView, 
         meta: { reqLoggedOut: true }, },
     { path: '/register', name: 'register', component: RegisterView, 
         meta: { reqLoggedOut: true }, },
